@@ -6,11 +6,13 @@ import Login from '@c/pages/frontEnd/Login'
 import Home from '@c/pages/frontEnd/Home'
 import Cart from '@c/pages/frontEnd/Cart'
 import CustomerCheckout from '@c/pages/frontEnd/CustomerCheckout'
+import FrontTemp from '@c/pages/FrontEnd/common/Front_Temp'
 
 // 後台
 import Orders from '@c/pages/backEnd/Orders'
 import Products from '@c/pages/backEnd/Products'
 import Coupons from '@c/pages/backEnd/Coupons'
+import BackTemp from '@c/pages/backEnd/common/Back_Temp'
 
 Vue.use(Router)
 
@@ -20,27 +22,32 @@ export default new Router({
       redirect: 'login'
     },
     {
-      path: '/login',
-      name: 'Login',
-      component: Login,
-    }, {
-      path: '/home',
-      name: 'Home',
-      component: Home,
-    }, {
-      path: '/cart',
-      name: 'Cart',
-      component: Cart,
-    }, {
-      path: '/customer_checkout/:orderId',
-      name: 'CustomerCheckout',
-      component: CustomerCheckout,
+      path: '/',
+      name: 'root',
+      component: FrontTemp,
+      children: [{
+        path: 'login',
+        name: 'Login',
+        component: Login,
+      }, {
+        path: 'home',
+        name: 'Home',
+        component: Home,
+      }, {
+        path: 'cart',
+        name: 'Cart',
+        component: Cart,
+      }, {
+        path: 'customer_checkout/:orderId',
+        name: 'CustomerCheckout',
+        component: CustomerCheckout,
+      }, ]
     },
     {
       // admin下都需驗證
       path: '/admin',
       name: 'admin',
-      component: backTemp,
+      component: BackTemp,
       // 注意在children下的path不用加上/
       children: [{
         path: 'products',
