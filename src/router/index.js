@@ -30,7 +30,7 @@ export default new Router({
         name: 'Login',
         component: Login,
       }, {
-        path: 'home',
+        path: '',
         name: 'Home',
         component: Home,
       }, {

@@ -43,7 +43,7 @@
         </h6>
         <ul class="nav flex-column mb-2">
           <li class="nav-item">
-            <router-link class="nav-link" to="/home">
+            <router-link class="nav-link" to="/">
               <i class="fas fa-ticket-alt"></i>模擬購物
             </router-link>
           </li>

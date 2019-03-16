@@ -57,7 +57,7 @@ export default {
         console.log("Login.vue", response.data);
         if (response.data.success) {
           // 登入成功就到此路徑
-          vm.$router.push("/home");
+          vm.$router.push("/");
         }
       });
     }
