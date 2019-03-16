@@ -3,7 +3,7 @@
     <!-- 全局的loading,有在main.js中import -->
     <loading :active.sync="isLoading"></loading>
     <div class="row mt-4">
-      <div class="col-md-2 mb-4" v-for="(item) in filterProducts" :key="item.id">
+      <div class="col-sm-12 col-lg-3 col-md-4 mb-4" v-for="(item) in filterProducts" :key="item.id">
         <div class="card border-0 shadow-sm item-hover" style="overflow:hidden">
           <!-- PS:使用動態樣式把圖片載入進來 注意：這個tag不是<img> -->
           <div

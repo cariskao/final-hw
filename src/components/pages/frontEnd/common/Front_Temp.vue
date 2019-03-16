@@ -4,14 +4,10 @@
     <!-- <Alert>預設不顯示,好像要放在欲使用此組件的父層 -->
     <!-- 在main.js已寫成全局組件 -->
     <Alert/>
-    <div class="container-fluid">
-      <div class="row">
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-          <!-- 所以<router-view>現在是巢狀的,這裡是內層,外層在App.vue -->
-          <!-- 這裡引入router/index.js下的/admin/children -->
-          <router-view></router-view>
-        </main>
-      </div>
+    <div class="container main-content mb-3">
+      <!-- 所以<router-view>現在是巢狀的,這裡是內層,外層在App.vue -->
+      <!-- 這裡會引入router/index.js下的/admin/children -->
+      <router-view></router-view>
     </div>
   </div>
 </template>
