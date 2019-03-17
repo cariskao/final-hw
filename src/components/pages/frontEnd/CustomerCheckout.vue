@@ -1,5 +1,5 @@
 <template>
-  <div class="my-5 row justify-content-center">
+  <div class="row justify-content-center" style="margin-top:120px">
     <form class="col-md-6" @submit.prevent="payOrder">
       <table class="table">
         <thead>

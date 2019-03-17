@@ -1,67 +1,71 @@
 <template>
-  <div>
+  <div style="margin-top:150px">
     <!-- 全局的loading,有在main.js中import -->
     <loading :active.sync="isLoading"></loading>
-    <div class="row mt-4">
-      <div class="col-sm-12 col-lg-3 col-md-4 mb-4" v-for="(item) in filterProducts" :key="item.id">
-        <div class="card border-0 shadow-sm item-hover" style="overflow:hidden">
-          <!-- PS:使用動態樣式把圖片載入進來 注意：這個tag不是<img> -->
+    <div class="row">
+      <Slide/>
+      <div class="col-sm-12 col-md-9">
+        <div class="row">
           <div
-            @click="getProduct(item.id)"
-            :style="{ backgroundImage: `url(${item.imageUrl})` }"
-            class="photo-scale"
-            style="height: 230px; background-size: cover; background-position: top;cursor: pointer"
-          ></div>
-          <div class="card-body">
-            <span class="badge badge-secondary float-right ml-2">{{ item.category }}</span>
-            <h5 class="card-title word-size">
-              <a @click="getProduct(item.id)" href="#" class="text-dark">{{ item.title }}</a>
-            </h5>
-            <p class="card-text">{{ item.description }}</p>
-            <p class="card-text">{{ item.content }}</p>
-            <div class="justify-content-between align-items-baseline">
-              <!-- 如果沒有優惠價,就只顯示原價 -->
-              <div class="h5" v-if="!item.price">{{ item.origin_price }} 元</div>
-              <!-- 若有優惠價就連原價一起顯示 -->
-              <!-- <del>定义文档中已被删除的文本。 -->
-              <del class="h6" v-if="item.price">原價 {{ item.origin_price }} 元</del>
-              <div class="h5" v-if="item.price">特價 {{ item.price }} 元</div>
-            </div>
-          </div>
-          <div class="card-footer d-flex">
-            <button
+            v-for="(item) in filterProducts"
+            :key="item.id"
+            class="col-sm-12 col-md-4 card border-0 item-hover mb-4"
+            style="overflow:hidden"
+          >
+            <!-- PS:使用動態樣式把圖片載入進來 注意：這個tag不是<img> -->
+            <div
               @click="getProduct(item.id)"
-              type="button"
-              class="btn btn-outline-secondary btn-sm"
-            >
-              <!-- 局部的loading,使用fontawesome PS:二個icon同時運作是正常的 -->
-              <i class="fas fa-spinner fa-spin" v-if="status.loadingItem===item.id"></i>
-              查看更多
-            </button>
-            <!-- 這裡addtoCart()不用帶入2nd參數,這樣就會使用預設值1 -->
-            <button
-              @click="addtoCart(item.id)"
-              type="button"
-              class="btn btn-outline-danger btn-sm ml-auto"
-            >
-              <i class="fas fa-spinner fa-spin" v-if="status.loadingItem===item.id"></i>
-              加到購物車
-            </button>
+              :style="{ backgroundImage: `url(${item.imageUrl})` }"
+              class="photo-scale"
+              style="height: 230px; background-size: cover; background-position: top;cursor: pointer"
+            ></div>
+            <div class="card-body">
+              <span class="badge badge-secondary float-right ml-2">{{ item.category }}</span>
+              <h5 class="card-title word-size">
+                <a @click="getProduct(item.id)" href="#" class="text-dark">{{ item.title }}</a>
+              </h5>
+              <p class="card-text">{{ item.description }}</p>
+              <p class="card-text">{{ item.content }}</p>
+              <div class="justify-content-between align-items-baseline">
+                <!-- 如果沒有優惠價,就只顯示原價 -->
+                <div class="h5" v-if="!item.price">{{ item.origin_price }} 元</div>
+                <!-- 若有優惠價就連原價一起顯示 -->
+                <!-- <del>定义文档中已被删除的文本。 -->
+                <del class="h6" v-if="item.price">原價 {{ item.origin_price }} 元</del>
+                <div class="h5" v-if="item.price">特價 {{ item.price }} 元</div>
+              </div>
+            </div>
+            <div class="card-footer d-flex">
+              <button
+                @click="getProduct(item.id)"
+                type="button"
+                class="btn btn-outline-secondary btn-sm"
+              >
+                <!-- 局部的loading,使用fontawesome PS:二個icon同時運作是正常的 -->
+                <i class="fas fa-spinner fa-spin" v-if="status.loadingItem===item.id"></i>
+                查看更多
+              </button>
+              <!-- 這裡addtoCart()不用帶入2nd參數,這樣就會使用預設值1 -->
+              <button
+                @click="addtoCart(item.id)"
+                type="button"
+                class="btn btn-outline-danger btn-sm ml-auto"
+              >
+                <i class="fas fa-spinner fa-spin" v-if="status.loadingItem===item.id"></i>
+                加到購物車
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-
-    <pagination :page-data="pagination" @changepage="getProducts"></pagination>
-
-    <!-- 「查看更多」的模板 -->
     <div
       class="modal fade"
       id="productModal"
       tabindex="-1"
       role="dialog"
       aria-labelledby="exampleModalLabel"
-      aria-hidden="true"
+      aria-hidden="false"
     >
       <div class="modal-dialog" role="document">
         <div class="modal-content border-0">
@@ -98,12 +102,18 @@
         </div>
       </div>
     </div>
+    <pagination :page-data="pagination" @changepage="getProducts"></pagination>
   </div>
 </template>
 
 <script>
 import $ from "jquery";
+import Slide from "@c/pages/frontEnd/common/Slide";
+
 export default {
+  components: {
+    Slide
+  },
   data() {
     return {
       products: [],
@@ -152,6 +162,8 @@ export default {
     },
     // 取得單一產品資訊
     getProduct(id) {
+      // const vm = this;
+      // vm.$router.push(`/detail`);
       const SERVER_PATH = "https://vue-course-api.hexschool.io";
       const API_PATH = "caris";
       // https://github.com/hexschool/vue-course-api-wiki/wiki/%E5%AE%A2%E6%88%B6%E8%B3%BC%E7%89%A9-%5B%E5%85%8D%E9%A9%97%E8%AD%89%5D#%E5%96%AE%E4%B8%80%E5%95%86%E5%93%81%E7%B4%B0%E7%AF%80

@@ -7,6 +7,7 @@ import Home from '@c/pages/frontEnd/Home'
 import Cart from '@c/pages/frontEnd/Cart'
 import CustomerCheckout from '@c/pages/frontEnd/CustomerCheckout'
 import FrontTemp from '@c/pages/FrontEnd/common/Front_Temp'
+import Detail from '@c/pages/FrontEnd/Detail'
 
 // 後台
 import Orders from '@c/pages/backEnd/Orders'
@@ -23,7 +24,7 @@ export default new Router({
     },
     {
       path: '/',
-      name: 'root',
+      name: '',
       component: FrontTemp,
       children: [{
         path: 'login',
@@ -37,6 +38,10 @@ export default new Router({
         path: 'cart',
         name: 'Cart',
         component: Cart,
+      }, {
+        path: 'detail',
+        name: 'Detail',
+        component: Detail,
       }, {
         path: 'customer_checkout/:orderId',
         name: 'CustomerCheckout',

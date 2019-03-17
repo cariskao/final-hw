@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="margin-top:120px">
     <!-- https://getbootstrap.com/docs/4.2/examples/sign-in/ -->
     <!-- 複製它的版型 -->
     <!-- submit也可直接寫在form上面 -->
