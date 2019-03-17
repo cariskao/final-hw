@@ -59,49 +59,7 @@
         </div>
       </div>
     </div>
-    <div
-      class="modal fade"
-      id="productModal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="false"
-    >
-      <div class="modal-dialog" role="document">
-        <div class="modal-content border-0">
-          <div class="modal-header bg-danger text-white">
-            <h5 class="modal-title" id="exampleModalLabel">{{ product.title }}</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <img :src="product.imageUrl" alt class="img-fluid">
-            <blockquote class="blockquote mt-3">
-              <p class="mb-0">{{ product.content }}</p>
-              <footer class="blockquote-footer text-right">{{ product.description }}</footer>
-            </blockquote>
-          </div>
-          <div class="d-flex justify-content-between align-items-baseline">
-            <div class="h4" v-if="!product.price">{{ product.origin_price }} 元</div>
-            <del class="h6" v-if="product.price">原價 {{ product.origin_price }} 元</del>
-            <div class="h4" v-if="product.price">現在只要 {{ product.price }} 元</div>
-          </div>
-          <!-- 依照後端API接口傳來的num參數做爲預設數量 -->
-          <select name id class="form-control mt-3" v-model="product.num">
-            <!-- 原本寫法 -->
-            <!-- <option value="1">選購 1 件</option> -->
-            <!-- 講座100改這樣 -->
-            <option :value="num" v-for="(num) in 10" :key="num">選購 {{num}} {{product.unit}}</option>
-          </select>
-          <div class="text-muted text-nowrap mr-3">
-            小計
-            <strong>{{ product.num * product.price }}</strong> 元
-          </div>
-          <div @click="addtoCart(product.id,product.num)" class="btn btn-primary">加到購物車</div>
-        </div>
-      </div>
-    </div>
+
     <pagination :page-data="pagination" @changepage="getProducts"></pagination>
   </div>
 </template>
@@ -162,8 +120,6 @@ export default {
     },
     // 取得單一產品資訊
     getProduct(id) {
-      // const vm = this;
-      // vm.$router.push(`/detail`);
       const SERVER_PATH = "https://vue-course-api.hexschool.io";
       const API_PATH = "caris";
       // https://github.com/hexschool/vue-course-api-wiki/wiki/%E5%AE%A2%E6%88%B6%E8%B3%BC%E7%89%A9-%5B%E5%85%8D%E9%A9%97%E8%AD%89%5D#%E5%96%AE%E4%B8%80%E5%95%86%E5%93%81%E7%B4%B0%E7%AF%80
@@ -176,8 +132,11 @@ export default {
       this.$http.get(api).then(response => {
         // console.log(response.data); //先檢查從來源獲取的資料正不正確
         vm.product = response.data.product;
-        $("#productModal").modal("show");
         vm.status.loadingItem = "";
+        console.log("getProduct", vm.product);
+
+        vm.$bus.$emit("detail", vm.product);
+        vm.$router.push(`/detail`);
       });
     },
     addtoCart(id, qty = 1) {
@@ -201,7 +160,6 @@ export default {
         // console.log("addtoCart", response.data);
         vm.status.loadingItem = "";
         vm.getCart(); // 重新取得購物車,刷新頁面的意思
-        $("#productModal").modal("hide");
       });
     },
     // 用來顯示在下方的客戶購物車清單列表
