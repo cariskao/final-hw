@@ -1,9 +1,9 @@
 <template>
   <div class="row justify-content-center" style="margin-top:150px">
     <!-- 購物車清單列表 -->
-    <p v-if="showCart.length > 0" style="font-size:30px">我的訂單</p>
+    <p v-if="cart.carts.length > 0" style="font-size:30px">我的訂單</p>
     <p v-else style="font-size:30px;">您現在購物車中沒有訂單</p>
-    <table v-if="showCart.length > 0" class="table col-md-12">
+    <table v-if="cart.carts.length > 0" class="table col-md-12">
       <thead>
         <tr>
           <th></th>
@@ -13,7 +13,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item) in showCart" :key="item.id">
+        <tr v-for="(item) in cart.carts" :key="item.id">
           <td style="text-align:center">
             <button @click="removeCartItem(item.id)" class="btn btn-outline-danger btn-sm">
               <i class="far fa-trash-alt"></i>
@@ -127,10 +127,12 @@
 </template>
 <script>
 import $ from "jquery";
+import { mapGetters, mapActions } from "vuex"; // 去哪兒網也有使用到mapState取得全部的state{}
+
 export default {
   data() {
     return {
-      showCart: [],
+      // showCart: [], 移到store後改成 => cart: {carts: []},
       coupon_code: "",
       // 讓訂單的<input>欄位做v-model的對應
       form: {
@@ -141,14 +143,20 @@ export default {
           address: ""
         },
         message: ""
-      },
+      }
+      /*
+      移到store
       total: {
         original: 0,
         final: 0
-      }
+      }*/
     };
   },
   methods: {
+    ...mapActions("cartModules", ["getCart"]),
+
+    // 以下移到store
+    /*
     getCart() {
       const SERVER_PATH = "https://vue-course-api.hexschool.io";
       const API_PATH = "caris";
@@ -164,8 +172,11 @@ export default {
         vm.total.final = response.data.data.final_total;
         vm.isLoading = false;
       });
-    },
+    },*/
     removeCartItem(id) {
+      this.$store.dispatch("cartModules/removeCartItem", id); // 透過dispatch()發送到actions
+      /*
+      以下移到store
       const SERVER_PATH = "https://vue-course-api.hexschool.io";
       const API_PATH = "caris";
       // https://github.com/hexschool/vue-course-api-wiki/wiki/%E5%AE%A2%E6%88%B6%E8%B3%BC%E7%89%A9-%5B%E5%85%8D%E9%A9%97%E8%AD%89%5D#%E5%88%AA%E9%99%A4%E6%9F%90%E4%B8%80%E7%AD%86%E8%B3%BC%E7%89%A9%E8%BB%8A%E8%B3%87%E6%96%99
@@ -182,32 +193,34 @@ export default {
         });
       } else {
         vm.isLoading = false;
-      }
+      }*/
     },
     useCouponCode() {
-      const SERVER_PATH = "https://vue-course-api.hexschool.io";
-      const API_PATH = "caris";
-      const api = `${SERVER_PATH}/api/${API_PATH}/coupon`;
+      const api = `${process.env.SERVER_API_PATH}/api/${
+        process.env.USER_PATH
+      }/coupon`;
       const vm = this;
+      // 這是後端API接口的格式
       const coupon = {
         code: vm.coupon_code
       };
-      vm.isLoading = true;
+      this.$store.dispatch("cartModules/updateLoading", true);
       // https://github.com/hexschool/vue-course-api-wiki/wiki/%E5%AE%A2%E6%88%B6%E8%B3%BC%E7%89%A9-[%E5%85%8D%E9%A9%97%E8%AD%89]#%E5%A5%97%E7%94%A8%E5%84%AA%E6%83%A0%E5%88%B8
       // 用戶端套用優惠卷,將用戶輸入得優惠碼傳到coupon比對有無符合的優惠碼
       this.$http.post(api, { data: coupon }).then(response => {
-        vm.getCart();
-        vm.isLoading = false;
         console.log("useCouponCode", response);
+        this.$store.dispatch("cartModules/getCart");
+        this.$store.dispatch("cartModules/updateLoading", false);
       });
     },
     createOrder() {
-      const SERVER_PATH = "https://vue-course-api.hexschool.io";
-      const API_PATH = "caris";
-      const api = `${SERVER_PATH}/api/${API_PATH}/order`;
+      const api = `${process.env.SERVER_API_PATH}/api/${
+        process.env.USER_PATH
+      }/order`;
       const vm = this;
       const order = vm.form; // 驗證成功就將<form>中各個<input>跟v-model對應的欄位資料post上去
-      vm.isLoading = true;
+
+      this.$store.dispatch("cartModules/updateLoading", true);
       // 送出表單前,做一次總驗證
       this.$validator.validate().then(result => {
         // 驗證成功在傳送
@@ -215,16 +228,17 @@ export default {
           // https://github.com/hexschool/vue-course-api-wiki/wiki/%E5%AE%A2%E6%88%B6%E8%B3%BC%E7%89%A9-[%E5%85%8D%E9%A9%97%E8%AD%89]#%E7%B5%90%E5%B8%B3%E9%A0%81%E9%9D%A2
           // 用戶端套用結帳頁面,將資料傳送到order
           this.$http.post(api, { data: order }).then(response => {
-            // console.log("createOrder-訂單已建立", response);
+            console.log("createOrder-訂單已建立", response);
             if (response.data.success) {
               vm.showCart = [];
-              // vm.getCart();
-              vm.isLoading = false;
+              // this.$store.dispatch("cartModules/addtoCart", { id, qty }); // 透過dispatch()發送到actions
+              // cart.carts.length
+              this.$store.dispatch("cartModules/updateLoading", false);
               vm.$router.push(`/customer_checkout/${response.data.orderId}`);
             }
           });
         } else {
-          vm.isLoading = false;
+          this.$store.dispatch("cartModules/updateLoading", false);
           console.log("欄位不完整");
         }
       });
@@ -232,6 +246,9 @@ export default {
   },
   created() {
     this.getCart();
+  },
+  computed: {
+    ...mapGetters("cartModules", ["cart"])
   }
 };
 </script>

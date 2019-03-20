@@ -4,6 +4,26 @@
       <router-link to="/">
         <img src="@a/img/logo.png" alt>
       </router-link>
+      <div class="input-group col-md-6">
+        <!-- <input
+            @keyup.esc="searchText = '',clickSlide=false"
+            class="form-control"
+            type="text"
+            v-model="searchText"
+            placeholder="Search"
+            aria-label="Search"
+        >-->
+        <input type="text" placeholder="Search" aria-label="Search" class="form-control">
+        <div class="input-group-append">
+          <button
+            class="btn btn-outline-secondary"
+            type="button"
+            @click="searchText = '',clickSlide=false"
+          >
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+      </div>
       <ul class="navbar-nav px-3 flex-row">
         <li class="nav-item">
           <router-link class="nav-link" to="/admin/products" title="後台管理">

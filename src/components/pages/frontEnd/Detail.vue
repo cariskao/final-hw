@@ -55,20 +55,42 @@
   </div>
 </template>
 <script>
+import { mapGetters } from "vuex"; // 去哪兒網也有使用到mapState取得全部的state{}
+
 export default {
   data() {
     return {
-      product: {}
+      // product: {} //使用vuex,移到store
     };
   },
-  methods: {},
+  methods: {
+    getProduct(id) {
+      const vm = this;
+      vm.$store.dispatch("productsModules/getProduct", id); // 透過dispatch()發送到actions
+    },
+    addtoCart(id, qty = 1) {
+      this.$store.dispatch("cartModules/addtoCart", { id, qty }); // 透過dispatch()發送到actions
+    }
+  },
+  computed: {
+    ...mapGetters("productsModules", ["product"])
+  },
   created() {
+    const vm = this;
+
+    vm.$bus.$on("detail", id => {
+      vm.getProduct(id);
+      console.log("detail-created", id);
+    });
+
+    /*
+    使用vuex之前的寫法
     const vm = this;
     vm.$bus.$on("detail", myProduct => {
       console.log("detail-myProduct", myProduct);
       vm.product = myProduct;
       console.log("detail-vm.product", vm.product);
-    });
+    });*/
   }
 };
 </script>

@@ -1,1 +1,29 @@
-[]
+[
+    {
+        "type": "Directory",
+        "name": "c:\\Users\\Administrator\\Desktop\\final-hw\\src\\components\\pages\\backEnd",
+        "parent_id": null,
+        "fsPath": "c:\\Users\\Administrator\\Desktop\\final-hw\\src\\components\\pages\\backEnd",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "pGlQzBLKdcW5XgyP"
+    },
+    {
+        "type": "Directory",
+        "name": "c:\\Users\\Administrator\\Desktop\\final-hw\\src\\components\\pages\\frontEnd",
+        "parent_id": null,
+        "fsPath": "c:\\Users\\Administrator\\Desktop\\final-hw\\src\\components\\pages\\frontEnd",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "imD2pB4KGfxsnRMa"
+    },
+    {
+        "type": "Directory",
+        "name": "c:\\Users\\Administrator\\Desktop\\final-hw\\src\\store",
+        "parent_id": null,
+        "fsPath": "c:\\Users\\Administrator\\Desktop\\final-hw\\src\\store",
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "SnGxhEfg4aJPiLAW"
+    }
+]

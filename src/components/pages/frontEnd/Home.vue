@@ -42,7 +42,9 @@
                 class="btn btn-outline-secondary btn-sm"
               >
                 <!-- 局部的loading,使用fontawesome PS:二個icon同時運作是正常的 -->
-                <i class="fas fa-spinner fa-spin" v-if="status.loadingItem===item.id"></i>
+                <!-- 已將「查看更多」的彈跳視窗移到Detail.vue,所以取消fontawsome的loading圖示 -->
+                <!-- <i class="fas fa-spinner fa-spin" v-if="status.loadingItem===item.id"></i>
+                -->
                 查看更多
               </button>
               <!-- 這裡addtoCart()不用帶入2nd參數,這樣就會使用預設值1 -->
@@ -67,6 +69,7 @@
 <script>
 import $ from "jquery";
 import Slide from "@c/pages/frontEnd/common/Slide";
+import { mapGetters, mapActions } from "vuex"; // 去哪兒網也有使用到mapState取得全部的state{}
 
 export default {
   components: {
@@ -74,33 +77,22 @@ export default {
   },
   data() {
     return {
-      products: [],
-      showCart: [],
-      coupons: [], // test
-      product: {},
-      pagination: {},
-      isLoading: false,
-      coupon_code: "",
+      // products: [], // 改成vuex,移到store
+      // isLoading: false, // 改成vuex,移到store
+      // product: {}, // 改成vuex,移到store
+      // showCart: [], // 改成vuex,移到store
+      pagination: {}
+      // coupon_code: "" // 移到Cart.vue
+      /*
+      已將「查看更多」的彈跳視窗移到Detail.vue,所以取消fontawsome的loading圖示
       status: {
         loadingItem: "" //存放被點擊產品的id,來判斷那個產品正在讀取中
-      },
-      total: {
-        original: 0,
-        final: 0
-      },
-      // 讓訂單的<input>欄位做v-model的對應
-      form: {
-        user: {
-          name: "",
-          email: "",
-          tel: "",
-          address: ""
-        },
-        message: ""
-      }
+      }*/
     };
   },
   methods: {
+    // 移到store/products.js
+    /*
     getProducts(page = 1) {
       const SERVER_PATH = "https://vue-course-api.hexschool.io";
       const API_PATH = "caris";
@@ -117,9 +109,17 @@ export default {
         vm.pagination = response.data.pagination;
         // console.log("getProducts", response);
       });
-    },
+    },*/
+    ...mapActions("productsModules", ["getProducts"]),
     // 取得單一產品資訊
     getProduct(id) {
+      const vm = this;
+
+      vm.$bus.$emit("detail", id);
+      vm.$router.push(`/detail`);
+
+      // 以下移到store/products.js
+      /*
       const SERVER_PATH = "https://vue-course-api.hexschool.io";
       const API_PATH = "caris";
       // https://github.com/hexschool/vue-course-api-wiki/wiki/%E5%AE%A2%E6%88%B6%E8%B3%BC%E7%89%A9-%5B%E5%85%8D%E9%A9%97%E8%AD%89%5D#%E5%96%AE%E4%B8%80%E5%95%86%E5%93%81%E7%B4%B0%E7%AF%80
@@ -138,8 +138,13 @@ export default {
         vm.$bus.$emit("detail", vm.product);
         vm.$router.push(`/detail`);
       });
+      */
     },
     addtoCart(id, qty = 1) {
+      this.$store.dispatch("cartModules/addtoCart", { id, qty }); // 透過dispatch()發送到actions
+
+      /*
+      以下移到store
       const SERVER_PATH = "https://vue-course-api.hexschool.io";
       const API_PATH = "caris";
       // https://github.com/hexschool/vue-course-api-wiki/wiki/%E5%AE%A2%E6%88%B6%E8%B3%BC%E7%89%A9-%5B%E5%85%8D%E9%A9%97%E8%AD%89%5D#%E5%8A%A0%E5%85%A5%E8%B3%BC%E7%89%A9%E8%BB%8A
@@ -161,9 +166,13 @@ export default {
         vm.status.loadingItem = "";
         vm.getCart(); // 重新取得購物車,刷新頁面的意思
       });
+      */
     },
     // 用來顯示在下方的客戶購物車清單列表
+    ...mapActions("cartModules", ["getCart"])
+    /*
     getCart() {
+      以下移到store
       const SERVER_PATH = "https://vue-course-api.hexschool.io";
       const API_PATH = "caris";
 
@@ -176,122 +185,20 @@ export default {
       this.$http.get(api).then(response => {
         // console.log("getCart(showCart)", response);
         vm.showCart = response.data.data.carts;
-        vm.total.original = response.data.data.total;
-        vm.total.final = response.data.data.final_total;
         vm.isLoading = false;
       });
-    },
-    removeCartItem(id) {
-      const SERVER_PATH = "https://vue-course-api.hexschool.io";
-      const API_PATH = "caris";
-
-      // https://github.com/hexschool/vue-course-api-wiki/wiki/%E5%AE%A2%E6%88%B6%E8%B3%BC%E7%89%A9-%5B%E5%85%8D%E9%A9%97%E8%AD%89%5D#%E5%88%AA%E9%99%A4%E6%9F%90%E4%B8%80%E7%AD%86%E8%B3%BC%E7%89%A9%E8%BB%8A%E8%B3%87%E6%96%99
-      // 免驗證,用戶端刪除某一筆購物車資料
-      const api = `${SERVER_PATH}/api/${API_PATH}/cart/${id}`;
-      const vm = this;
-      var r = confirm("確認刪除嗎?");
-
-      vm.isLoading = true;
-
-      if (r) {
-        this.$http.delete(api).then(response => {
-          // console.log("removeCartItem", response);
-          this.getCart();
-          vm.isLoading = false;
-        });
-      } else {
-        vm.isLoading = false;
-      }
-    },
-    getCoupon() {
-      const SERVER_PATH = "https://vue-course-api.hexschool.io";
-      const API_PATH = "caris";
-      const vm = this;
-      let coupon_total_pages = "";
-
-      vm.isLoading = true;
-
-      // 獲取優惠卷列表總頁數
-      const api_total_pages = `${SERVER_PATH}/api/${API_PATH}/admin/coupons/all`;
-      this.$http.get(api_total_pages).then(response => {
-        //優惠卷列表總頁數
-        // coupon_total_pages = response.data.pagination.total_pages;
-        // console.log("getCoupon-total-pages", coupon_total_pages);
-        // vm.coupons=response.data.
-        console.log("getCoupon-all", response);
-      });
-
-      // 獲取全部的優惠卷爲啓用的列表
-      // for (let index = 1; index <= coupon_total_pages; index++) {
-      //   let api = `${SERVER_PATH}/api/${API_PATH}/admin/coupons?page=${index}`;
-      //   this.$http.get(api).then(response => {
-      //     if (response.data.coupons.is_enabled) {
-      //     }
-      //     vm.coupons[index - 1] = response.data.coupons;
-      //     vm.isLoading = false;
-      //     console.log("getCoupon-allList", vm.coupons);
-      //   });
-      // }
-    },
-    useCouponCode() {
-      const SERVER_PATH = "https://vue-course-api.hexschool.io";
-      const API_PATH = "caris";
-      const api = `${SERVER_PATH}/api/${API_PATH}/coupon`;
-      const vm = this;
-      const coupon = {
-        code: vm.coupon_code
-      };
-
-      vm.isLoading = true;
-
-      // https://github.com/hexschool/vue-course-api-wiki/wiki/%E5%AE%A2%E6%88%B6%E8%B3%BC%E7%89%A9-[%E5%85%8D%E9%A9%97%E8%AD%89]#%E5%A5%97%E7%94%A8%E5%84%AA%E6%83%A0%E5%88%B8
-      // 用戶端套用優惠卷,將用戶輸入得優惠碼傳到coupon比對有無符合的優惠碼
-      this.$http.post(api, { data: coupon }).then(response => {
-        vm.getCart();
-        vm.isLoading = false;
-        console.log("useCouponCode", response);
-      });
-    },
-    createOrder() {
-      const SERVER_PATH = "https://vue-course-api.hexschool.io";
-      const API_PATH = "caris";
-      const api = `${SERVER_PATH}/api/${API_PATH}/order`;
-      const vm = this;
-      const order = vm.form; // 驗證成功就將<form>中各個<input>跟v-model對應的欄位資料post上去
-
-      vm.isLoading = true;
-
-      // 送出表單前,做一次總驗證
-      this.$validator.validate().then(result => {
-        // 驗證成功在傳送
-        if (result) {
-          // https://github.com/hexschool/vue-course-api-wiki/wiki/%E5%AE%A2%E6%88%B6%E8%B3%BC%E7%89%A9-[%E5%85%8D%E9%A9%97%E8%AD%89]#%E7%B5%90%E5%B8%B3%E9%A0%81%E9%9D%A2
-          // 用戶端套用結帳頁面,將資料傳送到order
-          this.$http.post(api, { data: order }).then(response => {
-            // console.log("createOrder-訂單已建立", response);
-            if (response.data.success) {
-              vm.showCart = [];
-              // vm.getCart();
-              vm.isLoading = false;
-              vm.$router.push(`/customer_checkout/${response.data.orderId}`);
-            }
-          });
-        } else {
-          vm.isLoading = false;
-          console.log("欄位不完整");
-        }
-      });
-    }
+    },*/
   },
   computed: {
     filterProducts() {
       return this.products.filter(e => e.is_enabled);
-    }
+    },
+    ...mapGetters("productsModules", ["categories", "products"]),
+    ...mapGetters("cartModules", ["isLoading", "cart"])
   },
   created() {
     this.getProducts();
     this.getCart();
-    // this.getCoupon();
   }
 };
 </script>
