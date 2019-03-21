@@ -69,7 +69,7 @@
 <script>
 import $ from "jquery";
 import Slide from "@c/pages/frontEnd/common/Slide";
-import { mapGetters, mapActions } from "vuex"; // 去哪兒網也有使用到mapState取得全部的state{}
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   components: {

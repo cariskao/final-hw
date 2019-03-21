@@ -127,8 +127,7 @@
 </template>
 <script>
 import $ from "jquery";
-import { mapGetters, mapActions } from "vuex"; // 去哪兒網也有使用到mapState取得全部的state{}
-
+import { mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
@@ -154,7 +153,6 @@ export default {
   },
   methods: {
     ...mapActions("cartModules", ["getCart"]),
-
     // 以下移到store
     /*
     getCart() {
@@ -219,7 +217,6 @@ export default {
       }/order`;
       const vm = this;
       const order = vm.form; // 驗證成功就將<form>中各個<input>跟v-model對應的欄位資料post上去
-
       this.$store.dispatch("cartModules/updateLoading", true);
       // 送出表單前,做一次總驗證
       this.$validator.validate().then(result => {
@@ -230,9 +227,7 @@ export default {
           this.$http.post(api, { data: order }).then(response => {
             console.log("createOrder-訂單已建立", response);
             if (response.data.success) {
-              vm.showCart = [];
-              // this.$store.dispatch("cartModules/addtoCart", { id, qty }); // 透過dispatch()發送到actions
-              // cart.carts.length
+              // vm.showCart = []; // API說「建立訂單後會把所選的購物車資訊刪除」,所以這行先註解掉
               this.$store.dispatch("cartModules/updateLoading", false);
               vm.$router.push(`/customer_checkout/${response.data.orderId}`);
             }

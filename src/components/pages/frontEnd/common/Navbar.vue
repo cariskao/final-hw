@@ -33,7 +33,7 @@
         <li class="nav-item">
           <router-link class="nav-link" to="/cart" title="我的購物車">
             <i class="fa fa-shopping-cart text-dark fa-2x" aria-hidden="true"></i>
-            <span class="cart-length">{{cartVal}}</span>
+            <span class="cart-length">{{cart.carts.length}}</span>
           </router-link>
         </li>
         <li class="nav-item">
@@ -47,17 +47,15 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
 export default {
   name: "Navbar",
   data() {
-    return {
-      cartVal: 0
-    };
+    return {};
   },
   methods: {
     signout() {
-      const SERVER_PATH = "https://vue-course-api.hexschool.io";
-      const api = `${SERVER_PATH}/logout`;
+      const api = `${process.env.SERVER_API_PATH}/logout`;
       const vm = this;
 
       this.$http.post(api).then(response => {
@@ -66,7 +64,14 @@ export default {
           vm.$router.push("/login");
         }
       });
-    }
+    },
+    ...mapActions("cartModules", ["getCart"])
+  },
+  created() {
+    this.getCart();
+  },
+  computed: {
+    ...mapGetters("cartModules", ["cart"])
   }
 };
 </script>
