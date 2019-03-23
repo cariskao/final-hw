@@ -1,5 +1,5 @@
 <template>
-  <div class="col-sm-12 col-md-3">
+  <div class="col-sm-12 col-md-2">
     <!-- 左側選單 (List group) -->
     <!-- sticky-top有固定的功能 -->
     <div class="list-group">

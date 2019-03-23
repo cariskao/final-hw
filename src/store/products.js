@@ -8,6 +8,7 @@ export default {
     products: [],
     categories: [],
     product: {},
+    pagination: {}
   },
   actions: {
     // 操作行爲:傳給mutations來操作資料狀態

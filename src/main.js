@@ -11,6 +11,7 @@ import currencyFilter from './filters/currency' //千分號
 import timestampFilter from './filters/timestamp'; //轉成日期
 import Pages from '@c/commons/Pagination' // 引入分頁組件
 import Alert from '@c/commons/AlertMessage' // 引入Alert組件
+import store from './store'
 
 // 引入套件
 import axios from 'axios'
@@ -43,8 +44,9 @@ axios.defaults.withCredentials = true;
 new Vue({
   el: '#app',
   router,
+  store, // 注意不要放到components中
   components: {
-    App
+    App,
   },
   template: '<App/>'
 })

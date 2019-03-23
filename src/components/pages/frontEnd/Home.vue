@@ -4,7 +4,7 @@
     <loading :active.sync="isLoading"></loading>
     <div class="row">
       <Slide/>
-      <div class="col-sm-12 col-md-9">
+      <div class="col-sm-12 col-md-10">
         <div class="row">
           <div
             v-for="(item) in filterProducts"
@@ -45,6 +45,7 @@
                 <!-- 已將「查看更多」的彈跳視窗移到Detail.vue,所以取消fontawsome的loading圖示 -->
                 <!-- <i class="fas fa-spinner fa-spin" v-if="status.loadingItem===item.id"></i>
                 -->
+                <i class="fas fa-info-circle"></i>
                 查看更多
               </button>
               <!-- 這裡addtoCart()不用帶入2nd參數,這樣就會使用預設值1 -->
@@ -53,7 +54,9 @@
                 type="button"
                 class="btn btn-outline-danger btn-sm ml-auto"
               >
-                <i class="fas fa-spinner fa-spin" v-if="status.loadingItem===item.id"></i>
+                <!-- 這裡也將局部的fontawesome loading改成全局的 -->
+                <!-- <i class="fas fa-spinner fa-spin" v-if="status.loadingItem===item.id"></i> -->
+                <i class="fas fa-cart-plus"></i>
                 加到購物車
               </button>
             </div>
@@ -61,7 +64,7 @@
         </div>
       </div>
     </div>
-
+    <!-- 改成vuex好像不用什麼父傳子 子傳父 -->
     <pagination :page-data="pagination" @changepage="getProducts"></pagination>
   </div>
 </template>
@@ -81,7 +84,7 @@ export default {
       // isLoading: false, // 改成vuex,移到store
       // product: {}, // 改成vuex,移到store
       // showCart: [], // 改成vuex,移到store
-      pagination: {}
+      // pagination: {} // 改成vuex,移到store
       // coupon_code: "" // 移到Cart.vue
       /*
       已將「查看更多」的彈跳視窗移到Detail.vue,所以取消fontawsome的loading圖示

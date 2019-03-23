@@ -13,6 +13,4 @@ export default {
 
 <style lang="scss">
 @import "./assets/all.scss";
-// @import "~susy/sass/susy";
-// @import "~susy/sass/plugins/svg-grid";
 </style>
