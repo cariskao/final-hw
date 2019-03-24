@@ -5,21 +5,16 @@
         <img src="@a/img/logo.png" alt>
       </router-link>
       <div class="input-group col-md-6">
-        <!-- <input
-            @keyup.esc="searchText = '',clickSlide=false"
-            class="form-control"
-            type="text"
-            v-model="searchText"
-            placeholder="Search"
-            aria-label="Search"
-        >-->
-        <input type="text" placeholder="Search" aria-label="Search" class="form-control">
+        <input
+          @keyup.esc="navbarReset"
+          class="form-control"
+          type="text"
+          v-model="searchText"
+          placeholder="Search"
+          aria-label="Search"
+        >
         <div class="input-group-append">
-          <button
-            class="btn btn-outline-secondary"
-            type="button"
-            @click="searchText = '',clickSlide=false"
-          >
+          <button class="btn btn-outline-secondary" type="button" @click="navbarReset">
             <i class="fa fa-times"></i>
           </button>
         </div>
@@ -51,9 +46,18 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   name: "Navbar",
   data() {
-    return {};
+    return {
+      searchText: "",
+      clickSlide: false
+    };
   },
   methods: {
+    navbarReset() {
+      const vm = this;
+      vm.searchText = "";
+      vm.clickSlide = false;
+      vm.$bus.$emit("searchText-clickSlide", vm.searchText, vm.clickSlide);
+    },
     signout() {
       const api = `${process.env.SERVER_API_PATH}/logout`;
       const vm = this;
@@ -66,6 +70,12 @@ export default {
       });
     },
     ...mapActions("cartModules", ["getCart"])
+  },
+  watch: {
+    searchText() {
+      const vm = this;
+      vm.$bus.$emit("search-text", vm.searchText);
+    }
   },
   created() {
     this.getCart();

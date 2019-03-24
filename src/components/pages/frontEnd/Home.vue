@@ -7,7 +7,7 @@
       <div class="col-sm-12 col-md-10">
         <div class="row">
           <div
-            v-for="(item) in filterProducts"
+            v-for="(item) in filterProductsSearch"
             :key="item.id"
             class="col-sm-12 col-md-4 card border-0 item-hover mb-4"
             style="overflow:hidden"
@@ -16,8 +16,7 @@
             <div
               @click="getProduct(item.id)"
               :style="{ backgroundImage: `url(${item.imageUrl})` }"
-              class="photo-scale"
-              style="height: 230px; background-size: cover; background-position: top;cursor: pointer"
+              class="photo-scale product-style"
             ></div>
             <div class="card-body">
               <span class="badge badge-secondary float-right ml-2">{{ item.category }}</span>
@@ -35,11 +34,12 @@
                 <div class="h5" v-if="item.price">特價 {{ item.price }} 元</div>
               </div>
             </div>
-            <div class="card-footer d-flex">
+            <div class="card-footer d-flex" style="padding:10px;border:1px solid gray">
               <button
                 @click="getProduct(item.id)"
                 type="button"
                 class="btn btn-outline-secondary btn-sm"
+                style="margin-right:5px"
               >
                 <!-- 局部的loading,使用fontawesome PS:二個icon同時運作是正常的 -->
                 <!-- 已將「查看更多」的彈跳視窗移到Detail.vue,所以取消fontawsome的loading圖示 -->
@@ -62,10 +62,9 @@
             </div>
           </div>
         </div>
+        <pagination :page-data="pagination" @changepage="getProducts"></pagination>
       </div>
     </div>
-    <!-- 改成vuex好像不用什麼父傳子 子傳父 -->
-    <pagination :page-data="pagination" @changepage="getProducts"></pagination>
   </div>
 </template>
 
@@ -80,6 +79,8 @@ export default {
   },
   data() {
     return {
+      searchText: "",
+      clickSlide: false
       // products: [], // 改成vuex,移到store
       // isLoading: false, // 改成vuex,移到store
       // product: {}, // 改成vuex,移到store
@@ -193,15 +194,54 @@ export default {
     },*/
   },
   computed: {
-    filterProducts() {
-      return this.products.filter(e => e.is_enabled);
+    // 整合到filterProductsSearch()
+    // filterProducts() {
+    //   return this.products.filter(e => e.is_enabled);
+    // },
+    // 判斷content要顯示的項目
+    filterProductsSearch() {
+      const vm = this;
+      if (!vm.searchText) {
+        vm.clickSlide = false;
+      }
+      if (vm.searchText && !vm.clickSlide) {
+        // vm.products對應下方的mapGetters
+        return vm.products.filter(item => {
+          // 先比對出有啓用的產品,再將search欄跟products都轉成小寫後,比對出符合的產品
+          // [1, 2, 3].includes(2); // true
+          // 詳細說明請參考vuex專案
+          if (item.is_enabled) {
+            const results = item.title
+              .toLowerCase()
+              .includes(vm.searchText.toLowerCase());
+            return results;
+          }
+        });
+      }
+      if (vm.clickSlide) {
+        return vm.products.filter(item => {
+          // const check = item.category == vm.clickSlide; // 除錯用
+          // console.log("clickSlide", check);
+          // console.log("clickSlide2", item.category);
+          return item.category === vm.searchText;
+        });
+      }
+      return vm.products;
     },
-    ...mapGetters("productsModules", ["categories", "products"]),
+    ...mapGetters("productsModules", ["products", "pagination"]),
     ...mapGetters("cartModules", ["isLoading", "cart"])
   },
   created() {
-    this.getProducts();
-    this.getCart();
+    const vm = this;
+    vm.getProducts();
+    vm.getCart();
+    vm.$bus.$on("searchText-clickSlide", (str, bool) => {
+      vm.searchText = str;
+      vm.clickSlide = bool;
+    });
+    vm.$bus.$on("search-text", str => {
+      vm.searchText = str;
+    });
   }
 };
 </script>
@@ -212,6 +252,12 @@ export default {
     animation-name: photo_scale;
     animation-duration: 1s;
   }
+}
+.product-style {
+  height: 230px;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
 }
 .word-size {
   white-space: nowrap; // 文本强制不换行；
