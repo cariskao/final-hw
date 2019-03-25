@@ -6,7 +6,7 @@
       <a
         class="list-group-item list-group-item-action"
         href="#"
-        @click.prevent="searchText = item,clickSlide=true"
+        @click.prevent="slideSend(item)"
         :class="{ 'active': item === searchText}"
         v-for="item in categories"
         :key="item"
@@ -17,29 +17,39 @@
       <a
         href="#"
         class="list-group-item list-group-item-action"
-        @click.prevent="searchText = ''"
+        @click.prevent="slideSend('')"
         :class="{ 'active': searchText === ''}"
       >全部顯示</a>
     </div>
   </div>
 </template>
 <script>
-import { mapGetters, mapActions } from "vuex"; // 去哪兒網也有使用到mapState取得全部的state{}
+import $ from "jquery";
+import { mapState, mapActions, mapGetters } from "vuex";
 export default {
   data() {
-    return {
-      searchText: "",
-      clickSlide: false
-    };
+    return {};
   },
   methods: {
-    ...mapActions("productsModules", ["getProducts"])
+    slideSend(item) {
+      const vm = this;
+
+      vm.$store.dispatch("productsModules/searchText", item);
+
+      if (item) {
+        vm.$store.dispatch("productsModules/clickSlide", true);
+      } else {
+        vm.$store.dispatch("productsModules/clickSlide", false);
+      }
+    }
+    // ...mapActions("productsModules", ["getProducts"])
   },
   computed: {
-    ...mapGetters("productsModules", ["categories"])
+    ...mapGetters("productsModules", ["categories", "searchText"])
   },
   created() {
-    this.getProducts();
+    // Home.vue的此功能就可將結果傳回categories
+    // this.getProducts();
   }
 };
 </script>

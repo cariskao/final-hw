@@ -42,14 +42,12 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import $ from "jquery";
+import { mapState, mapActions, mapGetters } from "vuex";
 export default {
   name: "Navbar",
   data() {
-    return {
-      searchText: "",
-      clickSlide: false
-    };
+    return {};
   },
   methods: {
     navbarReset() {
@@ -81,7 +79,8 @@ export default {
     this.getCart();
   },
   computed: {
-    ...mapGetters("cartModules", ["cart"])
+    ...mapGetters("cartModules", ["cart"]),
+    ...mapGetters("productsModules", ["searchText", "clickSlide"])
   }
 };
 </script>

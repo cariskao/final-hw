@@ -62,7 +62,7 @@
             </div>
           </div>
         </div>
-        <pagination :page-data="pagination" @changepage="getProducts"></pagination>
+        <!-- <pagination :page-data="pagination" @changepage="getProducts"></pagination> -->
       </div>
     </div>
   </div>
@@ -71,7 +71,7 @@
 <script>
 import $ from "jquery";
 import Slide from "@c/pages/frontEnd/common/Slide";
-import { mapGetters, mapActions } from "vuex";
+import { mapState, mapActions, mapGetters } from "vuex";
 
 export default {
   components: {
@@ -79,8 +79,8 @@ export default {
   },
   data() {
     return {
-      searchText: "",
-      clickSlide: false
+      // searchText: "", // 改成vuex,移到store
+      // clickSlide: false // 改成vuex,移到store
       // products: [], // 改成vuex,移到store
       // isLoading: false, // 改成vuex,移到store
       // product: {}, // 改成vuex,移到store
@@ -117,10 +117,7 @@ export default {
     ...mapActions("productsModules", ["getProducts"]),
     // 取得單一產品資訊
     getProduct(id) {
-      const vm = this;
-
-      vm.$bus.$emit("detail", id);
-      vm.$router.push(`/detail`);
+      this.$router.push(`/detail/${id}`);
 
       // 以下移到store/products.js
       /*
@@ -145,7 +142,7 @@ export default {
       */
     },
     addtoCart(id, qty = 1) {
-      this.$store.dispatch("cartModules/addtoCart", { id, qty }); // 透過dispatch()發送到actions
+      this.$store.dispatch("cartModules/addtoCart", { id, qty });
 
       /*
       以下移到store
@@ -198,27 +195,29 @@ export default {
     // filterProducts() {
     //   return this.products.filter(e => e.is_enabled);
     // },
-    // 判斷content要顯示的項目
+    // 判斷content要顯示的項目(移至vuex)
     filterProductsSearch() {
+      // https://yugasun.com/post/you-may-not-know-vuejs-13.html
+      // Computed property "clickSlide" was assigned to but it has no setter.
+      // 上述網址有說明這個error原因
       const vm = this;
-      if (!vm.searchText) {
-        vm.clickSlide = false;
-      }
+
+      // 搜尋欄的部分
       if (vm.searchText && !vm.clickSlide) {
         // vm.products對應下方的mapGetters
         return vm.products.filter(item => {
           // 先比對出有啓用的產品,再將search欄跟products都轉成小寫後,比對出符合的產品
           // [1, 2, 3].includes(2); // true
           // 詳細說明請參考vuex專案
-          if (item.is_enabled) {
-            const results = item.title
-              .toLowerCase()
-              .includes(vm.searchText.toLowerCase());
-            return results;
-          }
+          const results = item.title
+            .toLowerCase()
+            .includes(vm.searchText.toLowerCase());
+          return results;
         });
       }
-      if (vm.clickSlide) {
+
+      // slider的部分
+      if (vm.searchText && vm.clickSlide) {
         return vm.products.filter(item => {
           // const check = item.category == vm.clickSlide; // 除錯用
           // console.log("clickSlide", check);
@@ -226,22 +225,19 @@ export default {
           return item.category === vm.searchText;
         });
       }
-      return vm.products;
+
+      return vm.products; // 若皆無符合條件,就回傳全部商品列表
     },
-    ...mapGetters("productsModules", ["products", "pagination"]),
+    ...mapGetters("productsModules", [
+      "products",
+      "pagination",
+      "searchText",
+      "clickSlide"
+    ]),
     ...mapGetters("cartModules", ["isLoading", "cart"])
   },
   created() {
-    const vm = this;
-    vm.getProducts();
-    vm.getCart();
-    vm.$bus.$on("searchText-clickSlide", (str, bool) => {
-      vm.searchText = str;
-      vm.clickSlide = bool;
-    });
-    vm.$bus.$on("search-text", str => {
-      vm.searchText = str;
-    });
+    this.getProducts();
   }
 };
 </script>

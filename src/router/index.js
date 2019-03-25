@@ -39,7 +39,7 @@ export default new Router({
         name: 'Cart',
         component: Cart,
       }, {
-        path: 'detail',
+        path: 'detail/:detailId',
         name: 'Detail',
         component: Detail,
       }, {

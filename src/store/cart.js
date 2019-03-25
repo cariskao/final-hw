@@ -36,7 +36,7 @@ export default {
           context.commit('CART', response.data.data)
         }
         context.commit('LOADING', false)
-        console.log("取得購物車", response.data.data);
+        // console.log("取得購物車", response.data.data);
       });
     },
     addtoCart(context, {
