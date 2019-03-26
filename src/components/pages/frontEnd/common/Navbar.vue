@@ -27,11 +27,42 @@
         </li>
         <li class="nav-item">
           <!--  -->
+          <div class="dropdown ml-auto">
+            <button class="btn btn-sm btn-cart" data-toggle="dropdown" data-flip="false">
+              <i class="fa fa-shopping-cart text-dark fa-2x" aria-hidden="true"></i>
+              <span class="cart-length">{{cart.carts.length}}</span>
+              <span class="sr-only">unread messages</span>
+            </button>
+            <div
+              class="dropdown-menu dropdown-menu-right p-3"
+              style="min-width: 300px"
+              data-offset="400"
+            >
+              <h6>已選擇商品</h6>
+              <table class="table table-sm">
+                <tbody>
+                  <tr v-for="item in cart.carts" :key="item.id">
+                    <td class="align-middle text-center">
+                      <a href="#" class="text-muted" @click.prevent="removeCart(item.id)">
+                        <i class="far fa-trash-alt"></i>
+                      </a>
+                    </td>
+                    <td class="align-middle">{{ item.product.title }}</td>
+                    <td class="align-middle">{{ item.qty }}{{item.product.unit}}</td>
+                    <td class="align-middle text-right">{{item.total}}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <button class="btn btn-primary btn-block">
+                <i class="fa fa-cart-plus" aria-hidden="true"></i> 結帳去
+              </button>
+            </div>
+          </div>
           <!--  -->
-          <router-link class="nav-link" to="/cart" title="我的購物車">
+          <!-- <router-link class="nav-link" to="/cart" title="我的購物車">
             <i class="fa fa-shopping-cart text-dark fa-2x" aria-hidden="true"></i>
             <span class="cart-length">{{cart.carts.length}}</span>
-          </router-link>
+          </router-link>-->
         </li>
         <li class="nav-item">
           <a @click.prevent="signout" class="nav-link" href="#" title="Sign out" name="Sign out">
@@ -118,5 +149,23 @@ export default {
     padding: 10px;
     position: relative;
   }
+}
+
+/* 購物車按鈕 */
+.btn-cart {
+  background-color: transparent;
+  position: relative;
+}
+
+/* 購物車按鈕定位 */
+.btn-cart .badge {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+}
+
+.dropdown-menu-right {
+  right: 0;
+  left: auto;
 }
 </style>
