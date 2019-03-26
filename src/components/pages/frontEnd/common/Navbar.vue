@@ -6,7 +6,7 @@
       </router-link>
       <div class="input-group col-md-6">
         <input
-          @keyup.esc="navbarReset"
+          @keyup.esc="searchReset"
           class="form-control"
           type="text"
           v-model="searchText"
@@ -14,7 +14,7 @@
           aria-label="Search"
         >
         <div class="input-group-append">
-          <button class="btn btn-outline-secondary" type="button" @click="navbarReset">
+          <button class="btn btn-outline-secondary" type="button" @click="searchReset">
             <i class="fa fa-times"></i>
           </button>
         </div>
@@ -26,6 +26,8 @@
           </router-link>
         </li>
         <li class="nav-item">
+          <!--  -->
+          <!--  -->
           <router-link class="nav-link" to="/cart" title="我的購物車">
             <i class="fa fa-shopping-cart text-dark fa-2x" aria-hidden="true"></i>
             <span class="cart-length">{{cart.carts.length}}</span>
@@ -50,11 +52,14 @@ export default {
     return {};
   },
   methods: {
-    navbarReset() {
+    // https://yugasun.com/post/you-may-not-know-vuejs-13.html
+    // Computed property "searchText" was assigned to but it has no setter.
+    // 上述網址有說明這個error原因
+    // --------------------------------------------------------------------
+    searchReset() {
       const vm = this;
-      vm.searchText = "";
-      vm.clickSlide = false;
-      vm.$bus.$emit("searchText-clickSlide", vm.searchText, vm.clickSlide);
+      vm.$store.dispatch("productsModules/searchText", "");
+      vm.$store.dispatch("productsModules/clickSlide", false);
     },
     signout() {
       const api = `${process.env.SERVER_API_PATH}/logout`;
@@ -69,16 +74,18 @@ export default {
     },
     ...mapActions("cartModules", ["getCart"])
   },
-  watch: {
-    searchText() {
-      const vm = this;
-      vm.$bus.$emit("search-text", vm.searchText);
-    }
-  },
   created() {
     this.getCart();
   },
   computed: {
+    searchText: {
+      get() {
+        return this.$store.state.searchText;
+      },
+      set(value) {
+        this.$store.dispatch("productsModules/searchText", value);
+      }
+    },
     ...mapGetters("cartModules", ["cart"]),
     ...mapGetters("productsModules", ["searchText", "clickSlide"])
   }

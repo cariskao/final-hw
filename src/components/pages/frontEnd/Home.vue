@@ -197,9 +197,6 @@ export default {
     // },
     // 判斷content要顯示的項目(移至vuex)
     filterProductsSearch() {
-      // https://yugasun.com/post/you-may-not-know-vuejs-13.html
-      // Computed property "clickSlide" was assigned to but it has no setter.
-      // 上述網址有說明這個error原因
       const vm = this;
 
       // 搜尋欄的部分
