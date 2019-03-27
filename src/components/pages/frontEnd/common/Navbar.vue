@@ -19,57 +19,48 @@
           </button>
         </div>
       </div>
-      <ul class="navbar-nav px-3 flex-row">
-        <li class="nav-item">
-          <router-link class="nav-link" to="/admin/products" title="後台管理">
-            <span class="nav-words">後台管理</span>
-          </router-link>
-        </li>
-        <li class="nav-item">
-          <!--  -->
-          <div class="dropdown ml-auto">
-            <button class="btn btn-sm btn-cart" data-toggle="dropdown" data-flip="false">
-              <i class="fa fa-shopping-cart text-dark fa-2x" aria-hidden="true"></i>
-              <span class="cart-length">{{cart.carts.length}}</span>
-              <span class="sr-only">unread messages</span>
-            </button>
-            <div
-              class="dropdown-menu dropdown-menu-right p-3"
-              style="min-width: 300px"
-              data-offset="400"
-            >
-              <h6>已選擇商品</h6>
-              <table class="table table-sm">
-                <tbody>
-                  <tr v-for="item in cart.carts" :key="item.id">
-                    <td class="align-middle text-center">
-                      <a href="#" class="text-muted" @click.prevent="removeCart(item.id)">
-                        <i class="far fa-trash-alt"></i>
-                      </a>
-                    </td>
-                    <td class="align-middle">{{ item.product.title }}</td>
-                    <td class="align-middle">{{ item.qty }}{{item.product.unit}}</td>
-                    <td class="align-middle text-right">{{item.total}}</td>
-                  </tr>
-                </tbody>
-              </table>
-              <button class="btn btn-primary btn-block">
-                <i class="fa fa-cart-plus" aria-hidden="true"></i> 結帳去
-              </button>
-            </div>
-          </div>
-          <!--  -->
-          <!-- <router-link class="nav-link" to="/cart" title="我的購物車">
-            <i class="fa fa-shopping-cart text-dark fa-2x" aria-hidden="true"></i>
-            <span class="cart-length">{{cart.carts.length}}</span>
-          </router-link>-->
-        </li>
-        <li class="nav-item">
-          <a @click.prevent="signout" class="nav-link" href="#" title="Sign out" name="Sign out">
-            <i class="fas fa-sign-out-alt text-dark fa-2x"></i>
-          </a>
-        </li>
-      </ul>
+      <router-link class="nav-link b-end" to="/admin/products" title="後台管理">
+        <span class="b-end-menerger">後台管理</span>
+      </router-link>
+      <!--  -->
+      <div class="dropdown ml-auto">
+        <button class="btn btn-sm btn-cart" data-toggle="dropdown" data-flip="false">
+          <i class="fa fa-shopping-cart text-dark fa-2x" aria-hidden="true"></i>
+          <span class="cart-length">{{cart.carts.length}}</span>
+          <span class="sr-only">unread messages</span>
+        </button>
+        <div
+          class="dropdown-menu dropdown-menu-right p-3"
+          style="min-width: 350px"
+          data-offset="400"
+        >
+          <h6>已選擇商品</h6>
+          <table class="table table-sm">
+            <tbody>
+              <tr v-for="item in cart.carts" :key="item.id">
+                <td class="align-middle text-center">
+                  <a
+                    href="#"
+                    class="text-muted"
+                    @click.prevent="removeCart(item.id,item.product.title)"
+                  >
+                    <i class="far fa-trash-alt"></i>
+                  </a>
+                </td>
+                <td class="align-middle">{{ item.product.title }}</td>
+                <td class="align-middle">{{ item.qty }}{{item.product.unit}}</td>
+                <td class="align-middle text-right">{{item.total}}</td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="btn btn-primary btn-block">
+            <i class="fa fa-cart-plus" aria-hidden="true"></i> 結帳去
+          </button>
+        </div>
+      </div>
+      <a @click.prevent="signout" class="nav-link" href="#" title="Sign out" name="Sign out">
+        <i class="fas fa-sign-out-alt text-dark fa-2x"></i>
+      </a>
     </nav>
   </div>
 </template>
@@ -103,20 +94,15 @@ export default {
         }
       });
     },
+    removeCart(id, title) {
+      this.$store.dispatch("cartModules/removeCartItem", { id, title });
+    },
     ...mapActions("cartModules", ["getCart"])
   },
   created() {
     this.getCart();
   },
   computed: {
-    searchText: {
-      get() {
-        return this.$store.state.searchText;
-      },
-      set(value) {
-        this.$store.dispatch("productsModules/searchText", value);
-      }
-    },
     ...mapGetters("cartModules", ["cart"]),
     ...mapGetters("productsModules", ["searchText", "clickSlide"])
   }
@@ -124,44 +110,37 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.flex-row {
-  display: flex;
-  flex-direction: row;
-  .cart-length {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 25px;
-    text-align: center;
-    font-size: 18px;
-    font-weight: bold;
-    background-color: #ff0000;
-    color: white;
-    border-radius: 22px;
-  }
-  .nav-words {
+.cart-length {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 25px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: bold;
+  background-color: #ff0000;
+  color: white;
+  border-radius: 22px;
+}
+.b-end {
+  margin-left: 133px;
+  .b-end-menerger {
     font-size: 25px;
     font-weight: bold;
     color: #000000;
   }
-  li,
-  a {
-    padding: 10px;
-    position: relative;
-  }
+}
+li,
+a {
+  padding: 10px;
+  position: relative;
 }
 
 /* 購物車按鈕 */
 .btn-cart {
   background-color: transparent;
   position: relative;
-}
-
-/* 購物車按鈕定位 */
-.btn-cart .badge {
-  position: absolute;
-  top: 1px;
-  right: 1px;
+  margin-right: 20px;
 }
 
 .dropdown-menu-right {

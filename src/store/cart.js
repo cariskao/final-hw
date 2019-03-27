@@ -34,9 +34,9 @@ export default {
       axios.get(api).then(response => {
         if (response.data.data.carts) {
           context.commit('CART', response.data.data)
+          console.log("取得購物車", response.data.data);
         }
         context.commit('LOADING', false)
-        // console.log("取得購物車", response.data.data);
       });
     },
     addtoCart(context, {
@@ -61,9 +61,12 @@ export default {
         console.log("加入購物車:", response);
       });
     },
-    removeCartItem(context, id) {
+    removeCartItem(context, {
+      id,
+      title
+    }) {
       const api = `${process.env.SERVER_API_PATH}/api/${process.env.USER_PATH}/cart/${id}`;
-      var r = confirm("確認刪除嗎?");
+      var r = confirm(`確認刪除「${title}」嗎?`);
 
       context.commit('LOADING', true)
 

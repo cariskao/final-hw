@@ -74,7 +74,7 @@ export default {
 
       vm.$store.dispatch("cartModules/updateLoading", true);
       this.$http.get(api).then(response => {
-        // console.log("getProduct-id", response.data.product); //先檢查從來源獲取的資料正不正確
+        console.log("getProduct-id", response.data.product);
         vm.product = response.data.product;
         vm.$store.dispatch("cartModules/updateLoading", false);
       });
