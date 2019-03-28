@@ -60,7 +60,8 @@
         </div>
       </div>
       <a @click.prevent="signout" class="nav-link" href="#" title="Sign out" name="Sign out">
-        <i class="fas fa-sign-out-alt text-dark fa-2x"></i>
+        <i v-if="loginSuccess" class="fas fa-sign-out-alt text-dark fa-2x"></i>
+        <span v-else>登入</span>
       </a>
     </nav>
   </div>
@@ -87,8 +88,9 @@ export default {
       const vm = this;
 
       this.$http.post(api).then(response => {
-        console.log(response.data);
+        // console.log("已登出", response.data);
         if (response.data.success) {
+          this.$store.dispatch("loginSuccess", false);
           vm.$router.push("/login");
         }
       });
@@ -112,7 +114,8 @@ export default {
   computed: {
     // computed 是監控特定「變數的變化、並輸出資料於畫面上而不是用來輸入資料的（不會將 computed 放在 v-model 上）
     ...mapGetters("cartModules", ["cart"]),
-    ...mapGetters("productsModules", ["searchText", "clickSlide"])
+    ...mapGetters("productsModules", ["searchText", "clickSlide"]),
+    ...mapGetters(["loginSuccess"])
   }
 };
 </script>

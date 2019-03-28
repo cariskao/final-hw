@@ -69,9 +69,9 @@ export default {
   },
   methods: {
     getOrderlist(page = 1) {
-      const SERVER_PATH = "https://vue-course-api.hexschool.io";
-      const API_PATH = "caris";
-      const api = `${SERVER_PATH}/api/${API_PATH}/admin/orders?page=${page}`;
+      const api = `${process.env.SERVER_API_PATH}/api/${
+        process.env.USER_PATH
+      }/admin/orders?page=${page}`;
       const vm = this;
 
       vm.isLoading = true;

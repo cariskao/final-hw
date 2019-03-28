@@ -48,16 +48,16 @@ export default {
   },
   methods: {
     signin() {
-      const SERVER_PATH = "https://vue-course-api.hexschool.io";
-      const api = `${SERVER_PATH}/admin/signin`;
+      const api = `${process.env.SERVER_API_PATH}/admin/signin`;
       const vm = this;
 
       // 改成post,登入時觸發
       this.$http.post(api, vm.user).then(response => {
-        console.log("Login.vue", response.data);
+        // console.log("Login.vue", response.data);
         if (response.data.success) {
+          vm.$store.dispatch("loginSuccess", true);
           // 登入成功就到此路徑
-          vm.$router.push("/");
+          vm.$router.push("/admin/products");
         }
       });
     }
