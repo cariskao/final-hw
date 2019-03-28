@@ -61,6 +61,7 @@ export default {
       state.products = payload.filter(e => e.is_enabled);
     },
     CATEGORIES(state, payload) {
+      // 取得唯一值
       const categories = new Set();
       payload.forEach(item => {
         categories.add(item.category);

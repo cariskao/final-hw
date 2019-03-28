@@ -12,14 +12,14 @@
         :key="item"
       >
         <i class="fa fa-street-view" aria-hidden="true"></i>
-        {{ item }}
+        {{ item }}({{filterCategoryLength(item)}})
       </a>
       <a
         href="#"
         class="list-group-item list-group-item-action"
         @click.prevent="slideSend('')"
         :class="{ 'active': searchText === ''}"
-      >全部顯示</a>
+      >全部顯示({{products.length}})</a>
     </div>
   </div>
 </template>
@@ -41,10 +41,27 @@ export default {
       } else {
         vm.$store.dispatch("productsModules/clickSlide", false);
       }
+    },
+    filterCategoryLength(item) {
+      let products = this.products;
+      // console.log("filterCategoryLength", products);
+
+      return products.filter(list => {
+        return list.category === item;
+      }).length;
     }
   },
   computed: {
-    ...mapGetters("productsModules", ["categories", "searchText"])
+    /*
+    categories要跟著迴圈跑,所以要寫入()中的參數,而帶了參數就不能在computed中執行
+    filterCategoryLength() {
+      let products = this.products;
+
+      return products.filter(list => {
+        return list.category === this.categories;//無法這樣寫
+      }).length;
+    },*/
+    ...mapGetters("productsModules", ["categories", "searchText", "products"])
   },
   created() {}
 };

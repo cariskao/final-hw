@@ -62,10 +62,10 @@ router.beforeEach((to, from, next) => {
   // PS：是代表當任何一頁要直接輸入網址跳轉到任一頁有設定meta.requiresAuth時,都會執行
   if (to.meta.requiresAuth) {
     // 這裡可以設定環境變數,請看講座82
-    const SERVER_PATH = "https://vue-course-api.hexschool.io";
+    // const SERVER_PATH = "https://vue-course-api.hexschool.io";
     // https://github.com/hexschool/vue-course-api-wiki/wiki/%E7%99%BB%E5%85%A5%E5%8F%8A%E9%A9%97%E8%AD%89#%E6%AA%A2%E6%9F%A5%E7%94%A8%E6%88%B6%E6%98%AF%E5%90%A6%E4%BB%8D%E6%8C%81%E7%BA%8C%E7%99%BB%E5%85%A5
     // 檢查用戶是否仍持續登入
-    const api = `${SERVER_PATH}/api/user/check`; // 登入時就會觸發這個api
+    const api = `${process.env.SERVER_API_PATH}/api/user/check`; // 登入時就會觸發這個api
 
     // 因爲現在的執行環境是在router.beforeEach()下,並不是在vue的組件裡,所以沒辦法直接呼叫this.$http,所以直接使用axios
     axios.post(api).then(response => {
@@ -85,7 +85,6 @@ router.beforeEach((to, from, next) => {
     });
   } else {
     // 否則就跳轉
-    // console.log('什麼是next()?');
     next()
   }
 })
