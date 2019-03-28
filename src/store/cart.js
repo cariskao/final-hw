@@ -10,10 +10,6 @@ export default {
     cart: {
       carts: []
     },
-    total: {
-      original: 0,
-      final: 0
-    }
   },
   actions: {
     // context:名稱固定。

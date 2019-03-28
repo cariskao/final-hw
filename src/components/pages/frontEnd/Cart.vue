@@ -15,7 +15,10 @@
       <tbody>
         <tr v-for="(item) in cart.carts" :key="item.id">
           <td style="text-align:center">
-            <button @click="removeCartItem(item.id)" class="btn btn-outline-danger btn-sm">
+            <button
+              @click="removeCartItem(item.id,item.product.title)"
+              class="btn btn-outline-danger btn-sm"
+            >
               <i class="far fa-trash-alt"></i>
             </button>
           </td>
@@ -30,17 +33,17 @@
       <tfoot>
         <tr>
           <td colspan="3" class="text-right">總計</td>
-          <td class="text-right">{{total.original}}</td>
+          <td class="text-right">{{cart.total}}</td>
         </tr>
-        <tr v-if="total.final !== total.original">
+        <tr v-if="cart.final_total !== cart.total">
           <td colspan="3" class="text-right text-success">折扣價</td>
-          <td class="text-right text-success">{{total.final}}</td>
+          <td class="text-right text-success">{{cart.final_total}}</td>
         </tr>
       </tfoot>
     </table>
     <!-- 建立訂單及購物車頁面驗證 -->
     <!-- 清除它預設的submit行爲,只執行createOrder -->
-    <form class="col-md-12" @submit.prevent="createOrder">
+    <form class="col-md-12" style="margin-bottom:40px" @submit.prevent="createOrder">
       <div class="form-group">
         <!-- email驗證格式參考官網 https://github.com/baianat/vee-validate -->
         <label for="useremail">Email</label>
@@ -171,8 +174,9 @@ export default {
         vm.isLoading = false;
       });
     },*/
-    removeCartItem(id) {
-      this.$store.dispatch("cartModules/removeCartItem", id); // 透過dispatch()發送到actions
+    removeCartItem(id, title) {
+      const vm = this;
+      vm.$store.dispatch("cartModules/removeCartItem", { id, title }); // 透過dispatch()發送到actions
       /*
       以下移到store
       const SERVER_PATH = "https://vue-course-api.hexschool.io";
@@ -240,7 +244,8 @@ export default {
     }
   },
   created() {
-    this.getCart();
+    const vm = this;
+    vm.getCart();
   },
   computed: {
     ...mapGetters("cartModules", ["cart"])

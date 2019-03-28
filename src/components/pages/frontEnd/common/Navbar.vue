@@ -9,7 +9,7 @@
           @keyup.esc="searchReset"
           class="form-control"
           type="text"
-          v-model="searchText"
+          v-model="searchModel"
           placeholder="Search"
           aria-label="Search"
         >
@@ -22,7 +22,6 @@
       <router-link class="nav-link b-end" to="/admin/products" title="後台管理">
         <span class="b-end-menerger">後台管理</span>
       </router-link>
-      <!--  -->
       <div class="dropdown ml-auto">
         <button class="btn btn-sm btn-cart" data-toggle="dropdown" data-flip="false">
           <i class="fa fa-shopping-cart text-dark fa-2x" aria-hidden="true"></i>
@@ -31,7 +30,7 @@
         </button>
         <div
           class="dropdown-menu dropdown-menu-right p-3"
-          style="min-width: 350px"
+          style="min-width: 350px;"
           data-offset="400"
         >
           <h6>已選擇商品</h6>
@@ -53,9 +52,11 @@
               </tr>
             </tbody>
           </table>
-          <button class="btn btn-primary btn-block">
-            <i class="fa fa-cart-plus" aria-hidden="true"></i> 結帳去
-          </button>
+          <router-link to="/cart" class="i-style">
+            <button class="btn btn-primary">
+              <i class="fa fa-cart-plus" aria-hidden="true"></i> 結帳去
+            </button>
+          </router-link>
         </div>
       </div>
       <a @click.prevent="signout" class="nav-link" href="#" title="Sign out" name="Sign out">
@@ -71,13 +72,11 @@ import { mapState, mapActions, mapGetters } from "vuex";
 export default {
   name: "Navbar",
   data() {
-    return {};
+    return {
+      searchModel: ""
+    };
   },
   methods: {
-    // https://yugasun.com/post/you-may-not-know-vuejs-13.html
-    // Computed property "searchText" was assigned to but it has no setter.
-    // 上述網址有說明這個error原因
-    // --------------------------------------------------------------------
     searchReset() {
       const vm = this;
       vm.$store.dispatch("productsModules/searchText", "");
@@ -102,7 +101,16 @@ export default {
   created() {
     this.getCart();
   },
+  watch: {
+    searchModel() {
+      this.$store.dispatch("productsModules/searchText", this.searchModel);
+    },
+    searchText() {
+      this.searchModel = this.searchText;
+    }
+  },
   computed: {
+    // computed 是監控特定「變數的變化、並輸出資料於畫面上而不是用來輸入資料的（不會將 computed 放在 v-model 上）
     ...mapGetters("cartModules", ["cart"]),
     ...mapGetters("productsModules", ["searchText", "clickSlide"])
   }
@@ -110,6 +118,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.i-style {
+  text-decoration: none;
+  button {
+    width: 100%;
+  }
+}
 .cart-length {
   position: absolute;
   top: 0;

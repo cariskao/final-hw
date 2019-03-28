@@ -42,15 +42,11 @@ export default {
         vm.$store.dispatch("productsModules/clickSlide", false);
       }
     }
-    // ...mapActions("productsModules", ["getProducts"])
   },
   computed: {
     ...mapGetters("productsModules", ["categories", "searchText"])
   },
-  created() {
-    // Home.vue的此功能就可將結果傳回categories
-    // this.getProducts();
-  }
+  created() {}
 };
 </script>
 <style lang="scss">
