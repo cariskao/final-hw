@@ -70,7 +70,7 @@ router.beforeEach((to, from, next) => {
     // 因爲現在的執行環境是在router.beforeEach()下,並不是在vue的組件裡,所以沒辦法直接呼叫this.$http,所以直接使用axios
     axios.post(api).then(response => {
       // console.log('main.js-requiresAuth', response);
-      // console.log('main.js-requiresAuth-success', response.data.success);
+      console.log('main.js-requiresAuth-success', response.data.success);
       // 這裡若直接在網址輸入跳轉,則會回傳success=false
 
       if (response.data.success) {

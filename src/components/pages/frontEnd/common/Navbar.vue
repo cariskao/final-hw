@@ -30,7 +30,7 @@
         </button>
         <div
           class="dropdown-menu dropdown-menu-right p-3"
-          style="min-width: 350px;"
+          style="min-width: 400px;"
           data-offset="400"
         >
           <h6>已選擇商品</h6>

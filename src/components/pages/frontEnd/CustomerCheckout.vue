@@ -1,5 +1,6 @@
 <template>
   <div class="row justify-content-center" style="margin-top:120px">
+    <loading :active.sync="isLoading"></loading>
     <form class="col-md-6" @submit.prevent="payOrder">
       <table class="table">
         <thead>
@@ -57,6 +58,7 @@
 </template>
 
 <script>
+import { mapState, mapActions, mapGetters } from "vuex";
 export default {
   data() {
     return {
@@ -76,31 +78,30 @@ export default {
       // 取得某一筆訂單
       const api = `${SERVER_PATH}/api/${API_PATH}/order/${vm.orderId}`;
 
-      vm.isLoading = true;
+      this.$store.dispatch("cartModules/updateLoading", true);
 
       this.$http.get(api).then(response => {
         console.log("getOrder", response);
         vm.order = response.data.order;
-        vm.isLoading = false;
+        this.$store.dispatch("cartModules/updateLoading", false);
       });
     },
     payOrder() {
-      const SERVER_PATH = "https://vue-course-api.hexschool.io";
-      const API_PATH = "caris";
       const vm = this;
 
       // https://github.com/hexschool/vue-course-api-wiki/wiki/%E5%AE%A2%E6%88%B6%E8%B3%BC%E7%89%A9-[%E5%85%8D%E9%A9%97%E8%AD%89]#%E7%B5%90%E5%B8%B3%E4%BB%98%E6%AC%BE
       // 結帳付款
-      const api = `${SERVER_PATH}/api/${API_PATH}/pay/${vm.orderId}`;
+      const api = `${process.env.SERVER_API_PATH}/api/${
+        process.env.USER_PATH
+      }/pay/${vm.orderId}`;
 
-      vm.isLoading = true;
-
+      this.$store.dispatch("cartModules/updateLoading", true);
       this.$http.post(api).then(response => {
         console.log("payOrder", response);
         if (response.data.success) {
           this.getOrder();
         }
-        vm.isLoading = false;
+        this.$store.dispatch("cartModules/updateLoading", false);
       });
     }
   },
@@ -112,6 +113,9 @@ export default {
     // console.log("created-orderId", this.orderId); //check是否有抓到名稱
 
     this.getOrder();
+  },
+  computed: {
+    ...mapGetters("cartModules", ["isLoading"])
   }
 };
 </script>

@@ -1,5 +1,6 @@
 <template>
   <div class="row justify-content-center" style="margin-top:150px">
+    <loading :active.sync="isLoading"></loading>
     <!-- 購物車清單列表 -->
     <p v-if="cart.carts.length > 0" style="font-size:30px">我的訂單</p>
     <p v-else style="font-size:30px;">您現在購物車中沒有訂單</p>
@@ -130,7 +131,7 @@
 </template>
 <script>
 import $ from "jquery";
-import { mapGetters, mapActions } from "vuex";
+import { mapState, mapActions, mapGetters } from "vuex";
 export default {
   data() {
     return {
@@ -231,7 +232,7 @@ export default {
           this.$http.post(api, { data: order }).then(response => {
             console.log("createOrder-訂單已建立", response);
             if (response.data.success) {
-              // vm.showCart = []; // API說「建立訂單後會把所選的購物車資訊刪除」,所以這行先註解掉
+              // vm.showCart = []; // API說「建立訂單後(到customer_checkout)會把所選的購物車資訊刪除」,所以這行先註解掉
               this.$store.dispatch("cartModules/updateLoading", false);
               vm.$router.push(`/customer_checkout/${response.data.orderId}`);
             }
@@ -248,7 +249,7 @@ export default {
     vm.getCart();
   },
   computed: {
-    ...mapGetters("cartModules", ["cart"])
+    ...mapGetters("cartModules", ["isLoading", "cart"])
   }
 };
 </script>
