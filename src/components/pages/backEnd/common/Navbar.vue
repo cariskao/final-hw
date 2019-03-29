@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import { mapState, mapActions, mapGetters } from "vuex";
 export default {
   name: "Navbar",
   data() {
@@ -27,7 +28,6 @@ export default {
       this.$http.post(api).then(response => {
         // console.log(response.data);
         if (response.data.success) {
-          vm.$store.dispatch("loginSuccess", false);
           vm.$router.push("/login");
         }
       });

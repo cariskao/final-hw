@@ -90,7 +90,7 @@ export default {
       this.$http.post(api).then(response => {
         // console.log("已登出", response.data);
         if (response.data.success) {
-          this.$store.dispatch("loginSuccess", false);
+          vm.getLoginSuccess();
           vm.$router.push("/login");
         }
       });
@@ -98,10 +98,12 @@ export default {
     removeCart(id, title) {
       this.$store.dispatch("cartModules/removeCartItem", { id, title });
     },
+    ...mapActions(["getLoginSuccess"]),
     ...mapActions("cartModules", ["getCart"])
   },
   created() {
     this.getCart();
+    this.getLoginSuccess();
   },
   watch: {
     searchModel() {

@@ -55,7 +55,6 @@ export default {
       this.$http.post(api, vm.user).then(response => {
         // console.log("Login.vue", response.data);
         if (response.data.success) {
-          vm.$store.dispatch("loginSuccess", true);
           // 登入成功就到此路徑
           vm.$router.push("/admin/products");
         }

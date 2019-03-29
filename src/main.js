@@ -58,7 +58,7 @@ router.beforeEach((to, from, next) => {
   // console.log('main.js導航守衛/to', to, 'main.js導航守衛/from', from, 'main.js導航守衛/next', next);
   // console.log('main.js導航守衛/meta:', to.meta);
 
-  // 因在router/index.js中,我們是在HelloWorld設定meta,然後這裡if()裡條件是設to.meta,所以代表當任何一頁要直接輸入網址跳轉到HelloWorld時,就會進入這個條件式
+  // 因在router/index.js中,在需要防止「強行切換頁面」的頁面設定meta,然後這裡if()裡條件是設to.meta,所以代表當任何一頁要直接輸入網址跳轉到該頁面時,就會進入這個條件式
   // PS：是代表當任何一頁要直接輸入網址跳轉到任一頁有設定meta.requiresAuth時,都會執行
   if (to.meta.requiresAuth) {
     // 這裡可以設定環境變數,請看講座82
@@ -70,7 +70,7 @@ router.beforeEach((to, from, next) => {
     // 因爲現在的執行環境是在router.beforeEach()下,並不是在vue的組件裡,所以沒辦法直接呼叫this.$http,所以直接使用axios
     axios.post(api).then(response => {
       // console.log('main.js-requiresAuth', response);
-      console.log('main.js-requiresAuth-success', response.data.success);
+      // console.log('main.js-requiresAuth-success', response.data.success);
       // 這裡若直接在網址輸入跳轉,則會回傳success=false
 
       if (response.data.success) {
