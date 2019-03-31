@@ -24,6 +24,7 @@ import zhTWvalidate from 'vee-validate/dist/locale/zh_TW' // 驗證套件中文�
 import Vuex from 'vuex'
 import Vtip from 'vtip'
 import 'vtip/lib/index.min.css'
+import VueCarousel from '@chenfengyuan/vue-carousel';
 
 // 啓用套件(有的套件需要啓用才可以使用)
 Vue.use(VueAxios, axios)
@@ -42,6 +43,7 @@ Vue.component('Alert', Alert); // 再把Alert全域啓用
 
 // 全域使用套件
 Vue.component('Loading', Loading) // Loading動畫全局啓用(非fontawesome)
+Vue.component(VueCarousel.name, VueCarousel);
 
 Vue.config.productionTip = false // 預設
 axios.defaults.withCredentials = true;

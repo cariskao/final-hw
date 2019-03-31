@@ -2,6 +2,8 @@
   <div style="margin-top:150px">
     <!-- 全局的loading,有在main.js中import -->
     <loading :active.sync="isLoading"></loading>
+    <!-- slider -->
+    <carousel :data="data" style="margin-bottom:100px"></carousel>
     <div class="row">
       <Slide/>
       <div class="col-sm-12 col-md-10">
@@ -79,6 +81,12 @@ export default {
   },
   data() {
     return {
+      // slider
+      data: [
+        '<div class="example-slide"><img src="https://i.pinimg.com/originals/9e/91/2f/9e912fc996b37ada8f11a695e8307a40.jpg"></div>',
+        '<div class="example-slide"><img src="https://goo.gl/XYij8s"></div>',
+        '<div class="example-slide"><img src="https://i.pinimg.com/originals/79/96/4d/79964d1c3fa9b69b152e375364c5586e.jpg"></div>'
+      ]
       // searchText: "", // 改成vuex,移到store
       // clickSlide: false // 改成vuex,移到store
       // products: [], // 改成vuex,移到store
@@ -239,6 +247,15 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.example-slide {
+  align-items: center;
+  background-color: #666;
+  color: #999;
+  display: flex;
+  font-size: 1.5rem;
+  justify-content: center;
+  min-height: 10rem;
+}
 .item-hover:hover {
   background-color: darken(white, 10%);
   .photo-scale {
