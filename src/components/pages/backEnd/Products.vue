@@ -438,7 +438,7 @@ export default {
             // console.log("uploadFile-response-tempProduct", vm.tempProduct);
             //會看到id、num、title等資料都是呈現(...),表示有雙向綁定,但imageUrl沒有。
 
-            // 解決方案:動態添加新的響屬性(這裡爲強制將imageUrl改成動態屬性)
+            // 解決方案:動態添加新的屬性(這裡爲強制將imageUrl改成動態屬性)
             // vm.$set(object, key, value),就可確保有雙向綁定的功能
             vm.$set(vm.tempProduct, "imageUrl", response.data.imageUrl);
             // console.log("uploadFile-$set", vm.tempProduct); //imageUrl顯示(...)即爲動態屬性

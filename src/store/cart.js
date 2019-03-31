@@ -30,7 +30,7 @@ export default {
       axios.get(api).then(response => {
         if (response.data.data.carts) {
           context.commit('CART', response.data.data)
-          // console.log("取得購物車", response.data.data);
+          console.log("取得購物車", response.data.data.total);
         }
         context.commit('LOADING', false)
       });

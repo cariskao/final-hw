@@ -116,7 +116,20 @@
       <div class="input-group mb-3 input-group-sm">
         <input v-model="coupon_code" type="text" class="form-control" placeholder="請輸入優惠碼">
         <div class="input-group-append">
-          <button @click="useCouponCode" type="button" class="btn btn-outline-secondary">套用優惠碼</button>
+          <button
+            v-tip.keep="item.content"
+            v-for="(item, index) in toolTip_data"
+            :key="index"
+            @click.prevent="choiceCoupon(item.percent)"
+            type="button"
+            class="btn btn-outline-secondary"
+          >{{item.title}}</button>
+          <button
+            style="background:blue;color:white"
+            @click.prevent="useCouponCode"
+            type="button"
+            class="btn btn-outline-secondary"
+          >套用優惠碼</button>
         </div>
       </div>
       <div class="form-group">
@@ -130,6 +143,7 @@
   </div>
 </template>
 <script>
+// alert("也可以直接寫原生JS");
 import $ from "jquery";
 import { mapState, mapActions, mapGetters } from "vuex";
 export default {
@@ -146,7 +160,25 @@ export default {
           address: ""
         },
         message: ""
-      }
+      },
+      toolTip_data: [
+        {
+          title: "選擇 5 折優惠卷",
+          content: "滿50,000可享5折優惠",
+          percent: "50%"
+        },
+        {
+          title: "選擇 7 折優惠卷",
+          content: "滿30,000可享7折優惠",
+          percent: "70%"
+        },
+        {
+          title: "選擇 9 折優惠卷",
+          content: "滿20,000可享9折優惠",
+          percent: "90%"
+        }
+      ]
+
       /*
       移到store
       total: {
@@ -198,6 +230,28 @@ export default {
         vm.isLoading = false;
       }*/
     },
+    choiceCoupon(percent) {
+      const vm = this;
+      if (percent === "50%") {
+        if (vm.cart.total >= 50000) {
+          vm.coupon_code = "555";
+        } else {
+          alert("您的消費金額還不滿50,000元哦!");
+        }
+      } else if (percent === "70%") {
+        if (vm.cart.total >= 30000) {
+          vm.coupon_code = "777";
+        } else {
+          alert("您的消費金額還不滿30,000元哦!");
+        }
+      } else if (percent === "90%") {
+        if (vm.cart.total >= 20000) {
+          vm.coupon_code = "999";
+        } else {
+          alert("您的消費金額還不滿20,000元哦!");
+        }
+      }
+    },
     useCouponCode() {
       const api = `${process.env.SERVER_API_PATH}/api/${
         process.env.USER_PATH
@@ -207,13 +261,27 @@ export default {
       const coupon = {
         code: vm.coupon_code
       };
-      this.$store.dispatch("cartModules/updateLoading", true);
+      vm.$store.dispatch("cartModules/updateLoading", true);
       // https://github.com/hexschool/vue-course-api-wiki/wiki/%E5%AE%A2%E6%88%B6%E8%B3%BC%E7%89%A9-[%E5%85%8D%E9%A9%97%E8%AD%89]#%E5%A5%97%E7%94%A8%E5%84%AA%E6%83%A0%E5%88%B8
       // 用戶端套用優惠卷,將用戶輸入得優惠碼傳到coupon比對有無符合的優惠碼
       this.$http.post(api, { data: coupon }).then(response => {
-        console.log("useCouponCode", response);
-        this.$store.dispatch("cartModules/getCart");
-        this.$store.dispatch("cartModules/updateLoading", false);
+        console.log("Cart-useCouponCode", response.data.success);
+        if (response.data.success) {
+          vm.$bus.$emit(
+            "msg-from-cart-coupon",
+            response.data.message,
+            "primary"
+          );
+          vm.$store.dispatch("cartModules/getCart");
+          vm.$store.dispatch("cartModules/updateLoading", false);
+        } else {
+          vm.$bus.$emit(
+            "msg-from-cart-coupon",
+            response.data.message,
+            "danger"
+          );
+          vm.$store.dispatch("cartModules/updateLoading", false);
+        }
       });
     },
     createOrder() {
@@ -245,11 +313,12 @@ export default {
     }
   },
   created() {
-    const vm = this;
-    vm.getCart();
+    this.getCart();
   },
   computed: {
     ...mapGetters("cartModules", ["isLoading", "cart"])
   }
 };
 </script>
+<style lang="scss" scope>
+</style>

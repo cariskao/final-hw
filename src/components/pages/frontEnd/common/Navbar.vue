@@ -33,7 +33,15 @@
           style="min-width: 400px;"
           data-offset="400"
         >
-          <h6>已選擇商品</h6>
+          <h6 v-if="cart.carts.length > 0">已選擇商品</h6>
+          <div v-else style="text-align:center">
+            <h6>尚無商品</h6>
+            <img
+              style="width:300px"
+              src="https://cdngarenanow-a.akamaihd.net/shopee/shopee-pcmall-live-tw/assets/f3540f6657bbdc1120e3f8cc90bdba97.png"
+              alt
+            >
+          </div>
           <table class="table table-sm">
             <tbody>
               <tr v-for="item in cart.carts" :key="item.id">
@@ -52,7 +60,7 @@
               </tr>
             </tbody>
           </table>
-          <router-link to="/cart" class="i-style">
+          <router-link to="/cart" class="i-style" v-if="cart.carts.length > 0">
             <button class="btn btn-primary">
               <i class="fa fa-cart-plus" aria-hidden="true"></i> 結帳去
             </button>

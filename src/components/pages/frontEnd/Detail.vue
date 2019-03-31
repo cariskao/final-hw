@@ -93,7 +93,7 @@ export default {
   }
 };
 </script>
-<style lang="scss">
+<style lang="scss" scope>
 .flex {
   display: flex;
   justify-content: center;

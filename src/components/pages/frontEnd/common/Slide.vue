@@ -66,7 +66,7 @@ export default {
   created() {}
 };
 </script>
-<style lang="scss">
+<style lang="scss" scope>
 .sticky-top {
   top: 97px;
 }

@@ -73,16 +73,19 @@ export default {
     vm.$bus.$on("msg-from-products", (message, status = "warning") => {
       vm.updateMessage(message, status);
     });
+    vm.$bus.$on("msg-from-cart-coupon", (message, status = "warning") => {
+      vm.updateMessage(message, status);
+    });
   }
 };
 </script>
 
-<style scope>
+<style lang="scss" scope>
 .message-alert {
   position: fixed;
   max-width: 50%;
-  top: 56px;
-  right: 20px;
+  top: 150px;
+  right: calc(50% - (217px / 2));
   z-index: 1100;
 }
 </style>

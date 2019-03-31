@@ -20,6 +20,7 @@
     "scss": "^0.2.4",
     "susy": "^3.0.5",
     "vee-validate": "^2.1.7",
+    "vtip": "^1.0.6",
     "vue": "^2.5.2",
     "vue-axios": "^2.1.4",
     "vue-loading-overlay": "^3.1.1",

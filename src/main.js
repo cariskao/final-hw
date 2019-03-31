@@ -21,11 +21,18 @@ import 'vue-loading-overlay/dist/vue-loading.css';
 import 'bootstrap' // 要在這裡引入就必須安裝完整版本含jquery及popper
 import VeeValidate from 'vee-validate' // 驗證套件
 import zhTWvalidate from 'vee-validate/dist/locale/zh_TW' // 驗證套件中文化
+import Vuex from 'vuex'
+import Vtip from 'vtip'
+import 'vtip/lib/index.min.css'
 
 // 啓用套件(有的套件需要啓用才可以使用)
 Vue.use(VueAxios, axios)
 Vue.use(VeeValidate) // vue.use()之間不可合用,會error
+Vue.use(Vuex)
 VeeValidate.Validator.localize('zh_TW', zhTWvalidate) // 順序要在vue.use()之後,跟課程相反
+Vue.use(Vtip.directive)
+// 工具函数调用
+Vue.prototype.$tip = Vtip.tip
 
 // 全域使用自定義檔案
 Vue.filter('timestamp', timestampFilter);
