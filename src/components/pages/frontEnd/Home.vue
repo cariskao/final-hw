@@ -31,9 +31,9 @@
                 class="float-right"
                 style="margin-top:-20px;margin-right:5px"
               >
-                <!-- <i class="far fa-star"></i> -->
-                <i class="far fa-star" v-if="!item.isStar"></i>
-                <i class="fas fa-star" v-if="item.isStar"></i>
+                <!-- <i class="far fa-star" v-if="!item.isStar"></i> -->
+                <!-- <i class="fas fa-star" v-if="item.isStar"></i> -->
+                <i class="fa-star" :class="{ 'fas' : item.isStar, 'far' : !item.isStar }"></i>
               </a>
               <p class="card-text">{{ item.description }}</p>
               <p class="card-text">{{ item.content }}</p>

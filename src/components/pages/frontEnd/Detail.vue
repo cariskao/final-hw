@@ -4,7 +4,17 @@
     <div class="row" style="margin-top:120px">
       <div class="col-sm-12">
         <div class="row">
-          <div class="col-sm-12 col-md-4 text-center flex">
+          <div class="col-sm-12 col-md-4 text-center flex" style="position:relative">
+            <!-- 傳入data裡的product -->
+            <a
+              @click.prevent="addFavorite(product)"
+              href="#"
+              style="position:absolute;top:0;right:0;font-size:30px"
+            >
+              <!-- <i class="far fa-star" v-if="!chcekFavortie"></i> -->
+              <!-- <i class="fas fa-star" v-if="chcekFavortie"></i> -->
+              <i class="fa-star" :class="{ 'fas' : chcekFavortie, 'far' : !chcekFavortie }"></i>
+            </a>
             <img :src="product.imageUrl" alt>
           </div>
           <div class="col-sm-12 col-md-8">
@@ -30,23 +40,27 @@
                     v-if="product.price"
                   >現在只要 {{ product.price | currency }} 元</div>
                 </div>
-                <select name id class="form-control mt-3" v-model="product.num">
+                <select name id class="form-control mt-3" v-model="qty.num">
                   <!-- 原本寫法 -->
                   <!-- <option value="1">選購 1 件</option> -->
                   <!-- 講座100改這樣 -->
-                  <option value="選擇數量">選擇數量</option>
+                  <!-- <option value="選擇數量" selected>選擇數量</option> -->
                   <option :value="num" v-for="(num) in 10" :key="num">選購 {{num}} {{product.unit}}</option>
                 </select>
                 <div style="font-size:30px" class="text-nowrap mt-3 mb-3">
                   小計
                   <strong
-                    v-if="product.num && product.num > 0"
+                    v-if="qty.num && qty.num > 0 && product.price !== ''"
                     class="text-danger"
-                  >{{ product.num * product.price | currency }}</strong>
+                  >{{ qty.num * product.price | currency }}</strong>
+                  <strong
+                    v-else-if="qty.num && qty.num > 0 && product.price === ''"
+                    class="text-danger"
+                  >{{ qty.num * product.origin_price | currency }}</strong>
                   <strong v-else>0</strong>
                   元
                 </div>
-                <div @click="addtoCart(product.id,product.num)" class="btn btn-primary">加到購物車</div>
+                <div @click="addtoCart(product.id,qty.num)" class="btn btn-primary">加到購物車</div>
               </div>
             </div>
           </div>
@@ -62,16 +76,24 @@
   </div>
 </template>
 <script>
-import { mapGetters } from "vuex"; // 去哪兒網也有使用到mapState取得全部的state{}
-
+import { mapState, mapActions, mapGetters } from "vuex";
 export default {
+  inject: ["reload"],
   data() {
     return {
       detailId: "",
-      product: {}
+      product: {},
+      qty: {
+        num: 1
+      }
     };
   },
   methods: {
+    addFavorite(item) {
+      this.$store.dispatch("productsModules/addFavorite", item);
+      // location.reload(); // 刷新當前頁面,等同F5效果,體驗不佳
+      this.reload(); // 刷新當前頁面,需要先到App.vue寫入相關語法並在上方inject
+    },
     getDetail() {
       // 這個需要抓detailId(網址)的,好像不能放進vuex中
       const vm = this;
@@ -91,7 +113,17 @@ export default {
     }
   },
   computed: {
-    ...mapGetters("cartModules", ["isLoading"])
+    ...mapGetters("cartModules", ["isLoading"]),
+    chcekFavortie() {
+      const data = localStorage.getItem("myFavorite")
+        ? JSON.parse(localStorage.getItem("myFavorite"))
+        : console.log("nothing in localStorage");
+
+      const result = data.items.some(item => {
+        return item.id === this.detailId;
+      });
+      return result;
+    }
   },
   created() {
     // console.log(this.$route.params.detailId);
