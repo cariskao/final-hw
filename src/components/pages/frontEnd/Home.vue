@@ -86,6 +86,7 @@ import Slide from "@c/pages/frontEnd/common/Slide";
 import { mapState, mapActions, mapGetters } from "vuex";
 
 export default {
+  inject: ["reload"],
   components: {
     Slide
   },
@@ -115,6 +116,8 @@ export default {
   methods: {
     addFavorite(item) {
       this.$store.dispatch("productsModules/addFavorite", item);
+      // location.reload(); // 刷新當前頁面,等同F5效果,體驗不佳
+      this.reload(); // 刷新當前頁面,需要先到App.vue寫入相關語法並在上方inject
     },
     // 移到store/products.js
     /*
@@ -253,7 +256,6 @@ export default {
   created() {
     const vm = this;
     vm.getProducts();
-    // console.log("localStorage", localStorage.getItem("myFavorite"));
   }
 };
 </script>

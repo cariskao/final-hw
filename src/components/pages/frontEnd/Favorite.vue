@@ -64,6 +64,7 @@
 import { mapState, mapActions, mapGetters } from "vuex";
 
 export default {
+  inject: ["reload"],
   data() {
     return {
       getFavorites: { items: [] },
@@ -86,13 +87,11 @@ export default {
         this.getFavorites.items.forEach((item, index) => {
           if (item.id === d.id) {
             this.getFavorites.items.splice(index, 1); // 無法用item.splice()
-            // 下方這行若使用vm會有問題
-            if (this.getFavorites.items.length === 0) {
-              location.reload(); // 重新刷新當前分頁
-            }
           }
         });
         localStorage.setItem("myFavorite", JSON.stringify(this.getFavorites));
+        // location.reload(); // 刷新當前頁面,等同F5效果,體驗不佳
+        this.reload(); // 刷新當前頁面,需要先到App.vue寫入相關語法並在上方inject
       }
     }
   },
@@ -104,20 +103,15 @@ export default {
       ? JSON.parse(localStorage.getItem("myFavorite"))
       : console.log("nothing in localStorage");
 
-    this.$store.dispatch("cartModules/updateLoading", true);
-
     if (data) {
       if (data.items.length > 0) {
         this.getFavorites.items = data.items;
         this.checkEmpty = false;
-        this.$store.dispatch("cartModules/updateLoading", false);
       } else {
         this.checkEmpty = true;
-        this.$store.dispatch("cartModules/updateLoading", false);
       }
     } else {
       this.checkEmpty = true;
-      this.$store.dispatch("cartModules/updateLoading", false);
     }
     // localStorage.removeItem("myFavorite");
   }

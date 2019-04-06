@@ -1,4 +1,4 @@
-import Vue from 'vue';
+// import Vue from 'vue';
 import axios from 'axios'
 
 export default {
@@ -84,7 +84,7 @@ export default {
         context.commit('cartModules/LOADING', false, {
           root: true
         })
-        console.log("取得產品列表:", response.data.products);
+        // console.log("取得產品列表:", response.data.products);
       });
     },
   },

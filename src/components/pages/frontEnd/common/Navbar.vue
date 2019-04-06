@@ -4,7 +4,7 @@
       <router-link to="/">
         <img src="@a/img/logo.png" alt>
       </router-link>
-      <div class="input-group col-md-6">
+      <div class="input-group col-md-5">
         <input
           @keyup.esc="searchReset"
           class="form-control"
@@ -21,7 +21,8 @@
       </div>
       <div class="input-group-append navbar-style">
         <router-link class="nav-link" to="/favorite" title="我的最愛">
-          <i class="far fa-star"></i>我的最愛
+          <i class="far fa-star"></i>
+          我的最愛({{ favoriteTotal }})
         </router-link>
         <router-link class="nav-link" to="/admin/products" title="後台管理">後台管理</router-link>
       </div>
@@ -85,7 +86,8 @@ export default {
   name: "Navbar",
   data() {
     return {
-      searchModel: ""
+      searchModel: "",
+      favoriteTotal: 0
     };
   },
   methods: {
@@ -115,6 +117,12 @@ export default {
   created() {
     this.getCart();
     this.getLoginSuccess();
+
+    const data = localStorage.getItem("myFavorite")
+      ? JSON.parse(localStorage.getItem("myFavorite"))
+      : console.log("nothing in localStorage");
+
+    this.favoriteTotal = data.items.length;
   },
   watch: {
     searchModel() {
