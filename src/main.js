@@ -19,20 +19,20 @@ import VueAxios from 'vue-axios' // 將axios的AJAX套件轉爲Vue的套件,就�
 import Loading from 'vue-loading-overlay'; // Loading動畫套件
 import 'vue-loading-overlay/dist/vue-loading.css';
 import 'bootstrap' // 要在這裡引入就必須安裝完整版本含jquery及popper
-import VeeValidate from 'vee-validate' // 驗證套件
+import VeeValidate from 'vee-validate' // 驗證套件,若更新後有問題再看六角的說明
+// https://www.udemy.com/vue-hexschool/learn/v4/t/lecture/14052221?start=0
 import zhTWvalidate from 'vee-validate/dist/locale/zh_TW' // 驗證套件中文化
 import Vuex from 'vuex'
-import Vtip from 'vtip'
+import Vtip from 'vtip' // tooltip
 import 'vtip/lib/index.min.css'
-import VueCarousel from '@chenfengyuan/vue-carousel';
+import VueCarousel from '@chenfengyuan/vue-carousel'; // slider
 
 // 啓用套件(有的套件需要啓用才可以使用)
-Vue.use(VueAxios, axios)
-Vue.use(VeeValidate) // vue.use()之間不可合用,會error
 Vue.use(Vuex)
+Vue.use(VueAxios, axios)
+Vue.use(VeeValidate)
 VeeValidate.Validator.localize('zh_TW', zhTWvalidate) // 順序要在vue.use()之後,跟課程相反
 Vue.use(Vtip.directive)
-// 工具函数调用
 Vue.prototype.$tip = Vtip.tip
 
 // 全域使用自定義檔案
