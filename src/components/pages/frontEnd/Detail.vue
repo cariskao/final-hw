@@ -13,29 +13,36 @@
             >
               <div class="col p-4 d-flex flex-column position-static">
                 <h3 class="mb-0">
-                  title{{ product.title }}
+                  {{ product.title }}
                   <span
                     style="font-size:12px"
                     class="badge badge-secondary ml-2"
-                  >category</span>
+                  >{{ product.category }}</span>
                 </h3>
                 <div>
                   <div
                     class="h4 text-primary"
                     v-if="!product.price"
-                  >origin_price{{ product.origin_price }} 元</div>
-                  <del class="h6" v-if="product.price">原價 {{ product.origin_price }} 元</del>
-                  <div class="h4 text-primary" v-if="product.price">現在只要 {{ product.price }} 元</div>
+                  >售價 {{ product.origin_price | currency }} 元</div>
+                  <del class="h6" v-if="product.price">原價 {{ product.origin_price | currency }} 元</del>
+                  <div
+                    class="h4 text-primary"
+                    v-if="product.price"
+                  >現在只要 {{ product.price | currency }} 元</div>
                 </div>
                 <select name id class="form-control mt-3" v-model="product.num">
                   <!-- 原本寫法 -->
                   <!-- <option value="1">選購 1 件</option> -->
                   <!-- 講座100改這樣 -->
+                  <option value="選擇數量">選擇數量</option>
                   <option :value="num" v-for="(num) in 10" :key="num">選購 {{num}} {{product.unit}}</option>
                 </select>
                 <div style="font-size:30px" class="text-nowrap mt-3 mb-3">
                   小計
-                  <strong v-if="product.num" class="text-danger">{{ product.num * product.price }}</strong>
+                  <strong
+                    v-if="product.num && product.num > 0"
+                    class="text-danger"
+                  >{{ product.num * product.price | currency }}</strong>
                   <strong v-else>0</strong>
                   元
                 </div>

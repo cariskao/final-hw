@@ -23,17 +23,27 @@
             <div class="card-body">
               <span class="badge badge-secondary float-right ml-2">{{ item.category }}</span>
               <h5 class="card-title word-size">
-                <a @click="getProduct(item.id)" href="#" class="text-dark">{{ item.title }}</a>
+                <a @click.prevent="getProduct(item.id)" href="#" class="text-dark">{{ item.title }}</a>
               </h5>
+              <a
+                @click.prevent="addFavorite(item)"
+                href="#"
+                class="float-right"
+                style="margin-top:-20px;margin-right:5px"
+              >
+                <!-- <i class="far fa-star"></i> -->
+                <i class="far fa-star" v-if="!item.isStar"></i>
+                <i class="fas fa-star" v-if="item.isStar"></i>
+              </a>
               <p class="card-text">{{ item.description }}</p>
               <p class="card-text">{{ item.content }}</p>
               <div class="justify-content-between align-items-baseline">
                 <!-- 如果沒有優惠價,就只顯示原價 -->
-                <div class="h5" v-if="!item.price">{{ item.origin_price }} 元</div>
+                <div class="h5" v-if="!item.price">售價 {{ item.origin_price | currency }} 元</div>
                 <!-- 若有優惠價就連原價一起顯示 -->
                 <!-- <del>定义文档中已被删除的文本。 -->
-                <del class="h6" v-if="item.price">原價 {{ item.origin_price }} 元</del>
-                <div class="h5" v-if="item.price">特價 {{ item.price }} 元</div>
+                <del class="h6" v-if="item.price">原價 {{ item.origin_price | currency }} 元</del>
+                <div class="h5" v-if="item.price">特價 {{ item.price | currency }} 元</div>
               </div>
             </div>
             <div class="card-footer d-flex" style="padding:10px;border:1px solid gray">
@@ -103,6 +113,9 @@ export default {
     };
   },
   methods: {
+    addFavorite(item) {
+      this.$store.dispatch("productsModules/addFavorite", item);
+    },
     // 移到store/products.js
     /*
     getProducts(page = 1) {
@@ -199,10 +212,6 @@ export default {
     },*/
   },
   computed: {
-    // 整合到filterProductsSearch()
-    // filterProducts() {
-    //   return this.products.filter(e => e.is_enabled);
-    // },
     // 判斷content要顯示的項目(移至vuex)
     filterProductsSearch() {
       const vm = this;
@@ -242,11 +251,14 @@ export default {
     ...mapGetters("cartModules", ["isLoading", "cart"])
   },
   created() {
-    this.getProducts();
+    const vm = this;
+    vm.getProducts();
+    // console.log("localStorage", localStorage.getItem("myFavorite"));
   }
 };
 </script>
 <style lang="scss" scoped>
+// slider
 .example-slide {
   align-items: center;
   background-color: #666;

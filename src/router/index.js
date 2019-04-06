@@ -8,6 +8,7 @@ import Cart from '@c/pages/frontEnd/Cart'
 import CustomerCheckout from '@c/pages/frontEnd/CustomerCheckout'
 import FrontTemp from '@c/pages/FrontEnd/common/Front_Temp'
 import Detail from '@c/pages/FrontEnd/Detail'
+import Favorite from '@c/pages/FrontEnd/Favorite'
 
 // 後台
 import Orders from '@c/pages/backEnd/Orders'
@@ -34,6 +35,10 @@ export default new Router({
         path: '',
         name: 'Home',
         component: Home,
+      }, {
+        path: 'favorite',
+        name: 'Favorite',
+        component: Favorite,
       }, {
         path: 'cart',
         name: 'Cart',

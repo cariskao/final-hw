@@ -19,9 +19,12 @@
           </button>
         </div>
       </div>
-      <router-link class="nav-link b-end" to="/admin/products" title="後台管理">
-        <span class="b-end-menerger">後台管理</span>
-      </router-link>
+      <div class="input-group-append navbar-style">
+        <router-link class="nav-link" to="/favorite" title="我的最愛">
+          <i class="far fa-star"></i>我的最愛
+        </router-link>
+        <router-link class="nav-link" to="/admin/products" title="後台管理">後台管理</router-link>
+      </div>
       <div class="dropdown ml-auto">
         <button class="btn btn-sm btn-cart" data-toggle="dropdown" data-flip="false">
           <i class="fa fa-shopping-cart text-dark fa-2x" aria-hidden="true"></i>
@@ -69,7 +72,7 @@
       </div>
       <a @click.prevent="signout" class="nav-link" href="#" title="Sign out" name="Sign out">
         <i v-if="loginSuccess" class="fas fa-sign-out-alt text-dark fa-2x"></i>
-        <span v-else>登入</span>
+        <span v-else class="navbar-hover">登入</span>
       </a>
     </nav>
   </div>
@@ -131,6 +134,28 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$pad: 10px;
+$border-original: 1px solid transparent;
+$border-hover: 1px solid black;
+.navbar-style {
+  margin-left: 50px;
+  a {
+    padding: $pad;
+    color: black;
+    border: $border-original;
+    &:hover {
+      border: $border-hover;
+    }
+  }
+}
+.navbar-hover {
+  color: black;
+  padding: $pad;
+  border: $border-original;
+  &:hover {
+    border: $border-hover;
+  }
+}
 .i-style {
   text-decoration: none;
   button {
@@ -148,14 +173,6 @@ export default {
   background-color: #ff0000;
   color: white;
   border-radius: 22px;
-}
-.b-end {
-  margin-left: 133px;
-  .b-end-menerger {
-    font-size: 25px;
-    font-weight: bold;
-    color: #000000;
-  }
 }
 li,
 a {

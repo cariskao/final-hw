@@ -15,7 +15,7 @@ export default new Vuex.Store({
   namespaced: true,
   strict: true,
   state: {
-    loginSuccess: false
+    loginSuccess: false,
   },
   actions: {
     getLoginSuccess(context) {
@@ -33,7 +33,7 @@ export default new Vuex.Store({
   mutations: {
     LOGINSUCCESS(state, payload) {
       state.loginSuccess = payload
-    }
+    },
   },
   getters: {
     loginSuccess: state => state.loginSuccess,

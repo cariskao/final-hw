@@ -31,7 +31,7 @@
       <tbody>
         <!-- https://github.com/hexschool/vue-course-api-wiki/wiki/%E7%AE%A1%E7%90%86%E6%8E%A7%E5%88%B6%E5%8F%B0-%5B%E9%9C%80%E9%A9%97%E8%AD%89%5D#%E5%8F%96%E5%BE%97%E5%95%86%E5%93%81%E5%88%97%E8%A1%A8 -->
         <!-- 可以先看「取得商品列表」有哪些欄位 -->
-        <tr v-for="(item, index) in products" :key="index" class="item-hover">
+        <tr v-for="(item, index) in products_pagination" :key="index" class="item-hover">
           <td>{{ item.category }}</td>
           <td>{{ item.title }}</td>
           <!-- currency爲千分號,檔案在filters下 -->
@@ -51,34 +51,39 @@
         </tr>
       </tbody>
     </table>
+    <!-- 會將Pagination.vue的page值帶入getProducts -->
+    <pagination :page-data="pagination" @changepage="getProducts"></pagination>
 
     <!-- 下方分頁以及模板提供(非使用引入組件) -->
     <!-- https://getbootstrap.com/docs/4.2/components/pagination/ -->
+    <!-- 分頁改成使用使用組件 -->
+    <!--
     <nav aria-label="Page navigation example">
       <ul class="pagination">
-        <li :class="{ 'disabled':!pagination.has_pre }" class="page-item">
+        <li :class="{ 'disabled':!products_pagination.has_pre }" class="page-item">
           <a
-            @click.prevent="getProducts(pagination.current_page-1)"
+            @click.prevent="getProducts(products_pagination.current_page-1)"
             class="page-link"
             href="#"
             aria-label="Previous"
           >
             <span aria-hidden="true">&laquo;</span>
           </a>
-        </li>
-        <!-- 看console中的 pagination.total_pages PS:此時已可照項目多寡增加下方的頁數(預設一頁10筆資料)-->
-        <!-- 因爲我們是從後端做的API接口來獲取JSON,所以在pagination的資料會依項目數動態變化也是因爲後端的關係,我們只要操作獲取到的資料即可 -->
+    </li>-->
+    <!-- 看console中的 products_pagination.total_pages PS:此時已可照項目多寡增加下方的頁數(預設一頁10筆資料)-->
+    <!-- 因爲我們是從後端做的API接口來獲取JSON,所以在pagination的資料會依項目數動態變化也是因爲後端的關係,我們只要操作獲取到的資料即可 -->
+    <!--
         <li
           class="page-item"
-          v-for="(page) in pagination.total_pages"
+          v-for="(page) in products_pagination.total_pages"
           :key="page"
-          :class="{ 'active':pagination.current_page === page }"
+          :class="{ 'active':products_pagination.current_page === page }"
         >
           <a class="page-link" href="#" @click.prevent="getProducts(page)">{{ page }}</a>
         </li>
-        <li :class="{ 'disabled':!pagination.has_next }" class="page-item">
+        <li :class="{ 'disabled':!products_pagination.has_next }" class="page-item">
           <a
-            @click.prevent="getProducts(pagination.current_page+1)"
+            @click.prevent="getProducts(products_pagination.current_page+1)"
             class="page-link"
             href="#"
             aria-label="Next"
@@ -87,7 +92,7 @@
           </a>
         </li>
       </ul>
-    </nav>
+    </nav>-->
 
     <!-- Modal,新增或編輯模板 -->
     <!-- https://github.com/hexschool/vue-course-api-wiki/wiki/%E8%AA%B2%E7%A8%8B%E9%83%A8%E5%88%86%E6%A8%A1%E6%9D%BF -->
@@ -281,23 +286,27 @@
 <script>
 // vscode跟chrome console都會對「$」報錯,加入這行解決
 import $ from "jquery";
+import { mapState, mapActions, mapGetters } from "vuex";
+
 export default {
   data() {
     return {
-      products: [], // 一開始要撈的資料(get),或是當時用戶新增、編輯、刪除完,就重新取得商品列表
+      // products: [], // 一開始要撈的資料(get),或是當時用戶新增、編輯、刪除完,就重新取得商品列表
       tempProduct: {}, // 會被編輯(put)、刪除(delete)所共同使用並藉由this.tempProduct = Object.assign({}, item);來將item的值寫到一個{}中,並且避免item & tempProduct有傳參考的特性。
       isNew: false, // 判斷是要新增或是修改
-      isLoading: false,
+      // isLoading: false,
       status: {
         fileUpLoading: false //上傳圖片時的Loading局部效果用,若要連續測試要使用二張不同的圖片
-      },
-      pagination: {}
+      }
     };
   },
   methods: {
     // 當一進入頁面或是當時用戶新增、編輯、刪除完,就重新取得商品列表(get),路徑不在admin
     // https://github.com/hexschool/vue-course-api-wiki/wiki/%E5%AE%A2%E6%88%B6%E8%B3%BC%E7%89%A9-%5B%E5%85%8D%E9%A9%97%E8%AD%89%5D
     getProducts(page = 1) {
+      // 移到store/products.js
+      this.$store.dispatch("productsModules/getProducts", page);
+      /*
       // 講座95加上了(page = 1 )
       const SERVER_PATH = "https://vue-course-api.hexschool.io";
       const API_PATH = "caris";
@@ -311,7 +320,7 @@ export default {
         vm.products = response.data.products;
         vm.isLoading = false; //獲取完就取消Loading
         vm.pagination = response.data.pagination;
-      });
+      });*/
     },
     // 將原本BS4的彈跳視窗data-toggle="modal"改成用vuejs的$("#productModal").modal("show");來觸發。
     // 因爲我們資料是透過ajax獲取,所以會有延遲的問題,如果使用BS4預設的方式開啓,會在還來不及獲取資料就觸發而導致異常,所以我們用vuejs的函數寫入當符合適當的條件再觸發。
@@ -454,6 +463,10 @@ export default {
           }
         });
     }
+  },
+  computed: {
+    ...mapGetters("productsModules", ["products_pagination", "pagination"]),
+    ...mapGetters("cartModules", ["isLoading"])
   },
   created() {
     // 取得AJAX都是在created這個生命週期取得
