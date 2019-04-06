@@ -122,7 +122,9 @@ export default {
       ? JSON.parse(localStorage.getItem("myFavorite"))
       : console.log("nothing in localStorage");
 
-    this.favoriteTotal = data.items.length;
+    if (data.items[0]) {
+      this.favoriteTotal = data.items.length;
+    }
   },
   watch: {
     searchModel() {
