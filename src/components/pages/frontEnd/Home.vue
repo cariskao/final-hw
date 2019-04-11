@@ -3,22 +3,24 @@
     <!-- 全局的loading,有在main.js中import -->
     <loading :active.sync="isLoading"></loading>
     <!-- slider -->
-    <carousel :data="data" style="margin-bottom:100px"></carousel>
+    <carousel :data="data" style="margin-bottom:100px" class="example-slide"></carousel>
     <div class="row">
       <Slide/>
       <div class="col-sm-12 col-md-10">
         <div class="row">
+          <!-- card 的結構應在 col 內，而不是同一層,取消這個div中class的card到下一個div的class -->
           <div
             v-for="(item) in filterProductsSearch"
             :key="item.id"
-            class="col-sm-12 col-md-4 card border-0 item-hover mb-4"
+            class="col-sm-12 col-md-4 border-0 item-hover mb-4"
             style="overflow:hidden"
           >
             <!-- PS:使用動態樣式把圖片載入進來 注意：這個tag不是<img> -->
+            <!-- card 的結構應在 col 內，而不是同一層,從上一個div中class的card移到這一個div的class -->
             <div
               @click="getProduct(item.id)"
               :style="{ backgroundImage: `url(${item.imageUrl})` }"
-              class="photo-scale product-style"
+              class="photo-scale product-style card"
             ></div>
             <div class="card-body">
               <span class="badge badge-secondary float-right ml-2">{{ item.category }}</span>
@@ -94,9 +96,9 @@ export default {
     return {
       // slider
       data: [
-        '<div class="example-slide"><img src="https://i.pinimg.com/originals/9e/91/2f/9e912fc996b37ada8f11a695e8307a40.jpg"></div>',
-        '<div class="example-slide"><img src="https://goo.gl/XYij8s"></div>',
-        '<div class="example-slide"><img src="https://i.pinimg.com/originals/79/96/4d/79964d1c3fa9b69b152e375364c5586e.jpg"></div>'
+        '<img src="https://i.pinimg.com/originals/9e/91/2f/9e912fc996b37ada8f11a695e8307a40.jpg">',
+        '<img src="https://goo.gl/XYij8s">',
+        '<img src="https://i.pinimg.com/originals/79/96/4d/79964d1c3fa9b69b152e375364c5586e.jpg">'
       ]
       // searchText: "", // 改成vuex,移到store
       // clickSlide: false // 改成vuex,移到store

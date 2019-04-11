@@ -302,7 +302,7 @@ export default {
   },
   methods: {
     // 當一進入頁面或是當時用戶新增、編輯、刪除完,就重新取得商品列表(get),路徑不在admin
-    // https://github.com/hexschool/vue-course-api-wiki/wiki/%E5%AE%A2%E6%88%B6%E8%B3%BC%E7%89%A9-%5B%E5%85%8D%E9%A9%97%E8%AD%89%5D
+    // https://github.com/hexschool/vue-course-api-wiki/wiki/%E7%AE%A1%E7%90%86%E6%8E%A7%E5%88%B6%E5%8F%B0-%5B%E9%9C%80%E9%A9%97%E8%AD%89%5D#%E5%8F%96%E5%BE%97%E5%95%86%E5%93%81%E5%88%97%E8%A1%A8
     getProducts(page = 1) {
       // 移到store/products.js
       this.$store.dispatch("productsModules/getProducts", page);
@@ -310,7 +310,7 @@ export default {
       // 講座95加上了(page = 1 )
       const SERVER_PATH = "https://vue-course-api.hexschool.io";
       const API_PATH = "caris";
-      const api = `${SERVER_PATH}/api/${API_PATH}/products?page=${page}`; // 講座95加上了「?page=${page}」
+      const api = `${SERVER_PATH}/api/${API_PATH}/admin/products?page=${page}`; // 講座95加上了「?page=${page}」
       const vm = this;
 
       vm.isLoading = true; //進入獲取AJAX階段就執行Loading畫面

@@ -4,17 +4,19 @@
     <div class="row" style="margin-top:200px">
       <p class="col-sm-12" style="font-size:30px;margin-left:15px">我的最愛</p>
       <p v-if="checkEmpty" class="col-sm-12" style="font-size:20px;margin-left:15px">您還沒加入任何喜愛的商品哦!</p>
+      <!-- card 的結構應在 col 內，而不是同一層,取消這個div中class的card到下一個div的class -->
       <div
         v-for="(item) in getFavorites.items"
         :key="item.id"
-        class="col-sm-12 col-md-4 card border-0 item-hover mb-4"
+        class="col-sm-12 col-md-4 border-0 item-hover mb-4"
         style="overflow:hidden;"
       >
+        <!-- card 的結構應在 col 內，而不是同一層,從上一個div中class的card移到這一個div的class -->
         <div
           style="width:90%;margin:0 auto"
           @click="getProduct(item.id)"
           :style="{ backgroundImage: `url(${item.imageUrl})` }"
-          class="photo-scale product-style"
+          class="photo-scale product-style card"
         ></div>
         <div class="card-body">
           <span class="badge badge-secondary float-right ml-2">{{ item.category }}</span>
@@ -113,7 +115,10 @@ export default {
     } else {
       this.checkEmpty = true;
     }
-    // localStorage.removeItem("myFavorite");
+    // 書籤有
+    // localStorage.removeItem("myFavorite"); // 刪除單一項目,有時候會導致格式錯誤
+    // localStorage.clear(); // 整個reset,若出現格式錯誤(Unexpected token u in JSON at position 0)就執行clear()
+    console.log("length = " + localStorage.length);
   }
 };
 </script>
