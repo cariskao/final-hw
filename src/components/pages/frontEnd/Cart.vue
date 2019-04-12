@@ -31,17 +31,17 @@
               <div class="text-success" v-if="item.coupon">已套用優惠卷</div>
             </td>
             <td>{{item.qty}}/{{item.product.unit}}</td>
-            <td>{{item.total}}</td>
+            <td>{{item.total | currency }}</td>
           </tr>
         </tbody>
         <tfoot>
           <tr>
             <td colspan="3" class="text-right">總計</td>
-            <td class="text-right">{{cart.total}}</td>
+            <td class="text-right">{{cart.total | currency }}</td>
           </tr>
           <tr v-if="cart.final_total !== cart.total">
             <td colspan="3" class="text-right text-success">折扣價</td>
-            <td class="text-right text-success">{{cart.final_total}}</td>
+            <td class="text-right text-success">{{cart.final_total | currency }}</td>
           </tr>
         </tfoot>
       </table>
