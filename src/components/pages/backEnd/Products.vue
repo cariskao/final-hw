@@ -192,6 +192,7 @@
                       class="form-control"
                       id="origin_price"
                       placeholder="請輸入原價"
+                      name="original_price"
                     >
                   </div>
                   <div class="form-group col-md-6">
@@ -202,7 +203,10 @@
                       class="form-control"
                       id="price"
                       placeholder="請輸入售價"
+                      name="price"
+                      v-validate="'required'"
                     >
+                    <span class="text-danger" v-if="errors.has('price')">售價不可爲空</span>
                   </div>
                 </div>
                 <hr>
@@ -363,27 +367,39 @@ export default {
         }`;
         httpMethod = "put";
       }
-      /**
+
+      // 送出表單前,做一次總驗證
+      this.$validator.validate().then(result => {
+        // 驗證成功在傳送
+        if (result) {
+          /**
       $.post(URL,data,callback);
       必需的 URL 参数规定您希望请求的 URL。
       可选的 data 参数规定连同请求发送的数据(這裡應該是這個)。
       可选的 callback 参数是请求成功后所执行的函数名。
       */
-      // 因爲資料中的商品建立,參數是{}再包著一個data:{},所以要加上data:{}再上傳
-      // 將vm.tempProduct中先前填入的欄位資料傳到/admin/product/data下(新增)
-      // 或是：admin/product/:id/data下(修改)
-      this.$http[httpMethod](api, { data: vm.tempProduct }).then(response => {
-        // 在講座91將this.$http.post()改成用[]來選擇method
-        // console.log("products-post", response.data);
-        if (response.data.success) {
-          // 如果新增成功就把視窗關掉
-          $("#productModal").modal("hide");
-          // 並重新取得遠端資料
-          vm.getProducts();
+          // 因爲資料中的商品建立,參數是{}再包著一個data:{},所以要加上data:{}再上傳
+          // 將vm.tempProduct中先前填入的欄位資料傳到/admin/product/data下(新增)
+          // 或是：admin/product/:id/data下(修改)
+          this.$http[httpMethod](api, { data: vm.tempProduct }).then(
+            response => {
+              // 在講座91將this.$http.post()改成用[]來選擇method
+              // console.log("products-post", response.data);
+              if (response.data.success) {
+                // 如果新增成功就把視窗關掉
+                $("#productModal").modal("hide");
+                // 並重新取得遠端資料
+                vm.getProducts();
+              } else {
+                $("#productModal").modal("hide");
+                vm.getProducts();
+                console.log("新增失敗");
+              }
+            }
+          );
         } else {
-          $("#productModal").modal("hide");
-          vm.getProducts();
-          console.log("新增失敗");
+          console.log("欄位不完整");
+          this.$bus.$emit("msg-from-products", "售價不可爲空", "danger");
         }
       });
     },

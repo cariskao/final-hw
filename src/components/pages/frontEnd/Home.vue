@@ -40,12 +40,15 @@
               <p class="card-text">{{ item.description }}</p>
               <p class="card-text">{{ item.content }}</p>
               <div class="justify-content-between align-items-baseline">
-                <!-- 如果沒有優惠價,就只顯示原價 -->
-                <div class="h5" v-if="!item.price">售價 {{ item.origin_price | currency }} 元</div>
+                <!-- 如果沒有優惠價,就只顯示售價 -->
+                <div class="h5" v-if="!item.origin_price">售價 {{ item.price | currency }} 元</div>
                 <!-- 若有優惠價就連原價一起顯示 -->
                 <!-- <del>定义文档中已被删除的文本。 -->
-                <del class="h6" v-if="item.price">原價 {{ item.origin_price | currency }} 元</del>
-                <div class="h5" v-if="item.price">特價 {{ item.price | currency }} 元</div>
+                <div v-else-if="item.origin_price > item.price">
+                  <del class="h6">原價 {{ item.origin_price | currency }} 元</del>
+                  <div class="h5" v-if="item.price">特價 {{ item.price | currency }} 元</div>
+                </div>
+                <div class="h5" v-else>售價 {{ item.price | currency }} 元</div>
               </div>
             </div>
             <div class="card-footer d-flex" style="padding:10px;border:1px solid gray">

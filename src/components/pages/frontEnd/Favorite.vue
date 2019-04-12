@@ -95,30 +95,41 @@ export default {
         // location.reload(); // 刷新當前頁面,等同F5效果,體驗不佳
         this.reload(); // 刷新當前頁面,需要先到App.vue寫入相關語法並在上方inject
       }
+    },
+    checkLocalStorage() {
+      const data = localStorage.getItem("myFavorite")
+        ? JSON.parse(localStorage.getItem("myFavorite"))
+        : { items: [] };
+      if (data) {
+        if (data.items.length > 0) {
+          this.getFavorites.items = data.items;
+          this.checkEmpty = false;
+        } else {
+          this.checkEmpty = true;
+        }
+      } else {
+        this.checkEmpty = true;
+      }
+      // 書籤有
+      // localStorage.removeItem("myFavorite"); // 刪除單一項目,有時候會導致格式錯誤
+
+      // 整個reset,若出現格式錯誤(Unexpected token u in JSON at position 0)就執行clear()
+      // 執行前先將全部檔案中getItem名稱改成別的,執行後再改回來原本的名稱
+      // localStorage.clear();
+
+      // show出全部localStorage內的setItem名稱
+      // for (let i = 0; i < localStorage.length; i++) {
+      //   const items = localStorage.key([i]);
+      //   console.log(`DOMString[${i}]`, items);
+      // }
+      console.log("length = " + localStorage.length);
     }
   },
   computed: {
     ...mapGetters("cartModules", ["isLoading"])
   },
   created() {
-    const data = localStorage.getItem("myFavorite")
-      ? JSON.parse(localStorage.getItem("myFavorite"))
-      : console.log("nothing in localStorage");
-
-    if (data) {
-      if (data.items.length > 0) {
-        this.getFavorites.items = data.items;
-        this.checkEmpty = false;
-      } else {
-        this.checkEmpty = true;
-      }
-    } else {
-      this.checkEmpty = true;
-    }
-    // 書籤有
-    // localStorage.removeItem("myFavorite"); // 刪除單一項目,有時候會導致格式錯誤
-    // localStorage.clear(); // 整個reset,若出現格式錯誤(Unexpected token u in JSON at position 0)就執行clear()
-    console.log("length = " + localStorage.length);
+    this.checkLocalStorage();
   }
 };
 </script>

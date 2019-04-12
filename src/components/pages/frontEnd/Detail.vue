@@ -32,13 +32,13 @@
                 <div>
                   <div
                     class="h4 text-primary"
-                    v-if="!product.price"
-                  >售價 {{ product.origin_price | currency }} 元</div>
-                  <del class="h6" v-if="product.price">原價 {{ product.origin_price | currency }} 元</del>
-                  <div
-                    class="h4 text-primary"
-                    v-if="product.price"
-                  >現在只要 {{ product.price | currency }} 元</div>
+                    v-if="!product.origin_price"
+                  >售價 {{ product.price | currency }} 元</div>
+                  <div v-else-if="product.origin_price > product.price">
+                    <del class="h6">原價 {{ product.origin_price | currency }} 元</del>
+                    <div class="h4 text-primary">現在只要 {{ product.price | currency }} 元</div>
+                  </div>
+                  <div class="h5" v-else>售價 {{ product.price | currency }} 元</div>
                 </div>
                 <select name id class="form-control mt-3" v-model="qty.num">
                   <!-- 原本寫法 -->
@@ -49,15 +49,7 @@
                 </select>
                 <div style="font-size:30px" class="text-nowrap mt-3 mb-3">
                   小計
-                  <strong
-                    v-if="qty.num && qty.num > 0 && product.price !== ''"
-                    class="text-danger"
-                  >{{ qty.num * product.price | currency }}</strong>
-                  <strong
-                    v-else-if="qty.num && qty.num > 0 && product.price === ''"
-                    class="text-danger"
-                  >{{ qty.num * product.origin_price | currency }}</strong>
-                  <strong v-else>0</strong>
+                  <strong class="text-danger">{{ qty.num * product.price | currency }}</strong>
                   元
                 </div>
                 <div @click="addtoCart(product.id,qty.num)" class="btn btn-primary">加到購物車</div>
@@ -117,7 +109,7 @@ export default {
     chcekFavortie() {
       const data = localStorage.getItem("myFavorite")
         ? JSON.parse(localStorage.getItem("myFavorite"))
-        : console.log("nothing in localStorage");
+        : { items: [] };
 
       const result = data.items.some(item => {
         return item.id === this.detailId;

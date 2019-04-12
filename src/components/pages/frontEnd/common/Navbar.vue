@@ -34,7 +34,7 @@
         </button>
         <div
           class="dropdown-menu dropdown-menu-right p-3"
-          style="min-width: 400px;"
+          style="min-width: 480px;"
           data-offset="400"
         >
           <h6 v-if="cart.carts.length > 0">已選擇商品</h6>
@@ -60,7 +60,7 @@
                 </td>
                 <td class="align-middle">{{ item.product.title }}</td>
                 <td class="align-middle">{{ item.qty }}{{item.product.unit}}</td>
-                <td class="align-middle text-right">{{item.total}}</td>
+                <td class="align-middle text-right">{{item.total | currency }} 元</td>
               </tr>
             </tbody>
           </table>
@@ -111,20 +111,22 @@ export default {
     removeCart(id, title) {
       this.$store.dispatch("cartModules/removeCartItem", { id, title });
     },
+    checkLocalStorage() {
+      const data = localStorage.getItem("myFavorite")
+        ? JSON.parse(localStorage.getItem("myFavorite"))
+        : { items: [] };
+
+      if (data !== undefined) {
+        this.favoriteTotal = data.items.length;
+      }
+    },
     ...mapActions(["getLoginSuccess"]),
     ...mapActions("cartModules", ["getCart"])
   },
   created() {
     this.getCart();
     this.getLoginSuccess();
-
-    const data = localStorage.getItem("myFavorite")
-      ? JSON.parse(localStorage.getItem("myFavorite"))
-      : console.log("nothing in localStorage");
-
-    if (data !== undefined) {
-      this.favoriteTotal = data.items.length;
-    }
+    this.checkLocalStorage();
   },
   watch: {
     searchModel() {
