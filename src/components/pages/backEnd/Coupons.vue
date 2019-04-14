@@ -71,29 +71,25 @@
               </div>
               <div class="col-md-6 mt-2">
                 <div class="form-group">
-                  <input
-                    type="text"
-                    name="tt"
-                    id
-                    v-validate="'required|date_format:YYYY/MM/DD|after:2015/01/01'"
-                  >
-                  <span class="text-danger" v-if="errors.has('tt')">ttt</span>
                   <label>截止日期</label>
                   <!-- :class會使外框顯示紅色。:disabled當使用者勾選「不啓用」讓期限過期並讓使用者無法選擇日期 -->
+                  <!-- 將type="date"改成"text"時,日期格式會顯示YYYY-MM-DD,所以date_format也要相同格式 -->
                   <input
                     type="date"
+                    :min="dateMin"
+                    max="2100-01-01"
                     class="form-control"
                     :class="{'is-invalid': errors.has('end-date')}"
                     :disabled="!tempData.is_enabled && openChoice==='編輯'"
                     name="end-date"
                     v-model="due_date"
-                    v-validate="'required|date_format:YYYY/MM/DD|after:2015/01/01'"
+                    v-validate="'required'"
                   >
                   <span
                     v-if="!tempData.is_enabled && openChoice==='編輯'"
                     class="text-primary"
                   >若要設定日期，請勾選啓用</span>
-                  <span class="text-danger" v-if="errors.has('end-date')">請選擇超過二天以上當作截止日期</span>
+                  <span class="text-danger" v-if="errors.has('end-date')">截止日期不可爲空值</span>
                 </div>
               </div>
               <div class="col-md-12 mt-2">
@@ -166,7 +162,8 @@ export default {
   },
   methods: {
     onchange() {
-      // 等於js的onchange,用法:在html上綁定@change="onchange",目前沒用到
+      // 目前沒用到
+      // 等於js的onchange,用法:在html上綁定@change="onchange",在移除焦點時才會觸發相對應的事件
     },
     getCoupon(page = 1) {
       // https://github.com/hexschool/vue-course-api-wiki/wiki/%E7%AE%A1%E7%90%86%E6%8E%A7%E5%88%B6%E5%8F%B0-%5B%E9%9C%80%E9%A9%97%E8%AD%89%5D#%E5%8F%96%E5%BE%97%E5%84%AA%E6%83%A0%E5%88%B8%E5%88%97%E8%A1%A8
@@ -280,6 +277,15 @@ export default {
           console.log("deletCoupon", response.data);
         });
       }
+    },
+    getMyDate(calc) {
+      let theDay = new Date();
+      let changeDay = calc; // 要往後或往前幾天
+      // setDate 的方法會回傳時間戳記，同時 theDay 這個時間物件的值會改變
+      let timeStamp = theDay.setDate(theDay.getDate() + changeDay);
+      let days = theDay.toISOString().split("T")[0];
+      // console.log(days);
+      return days;
     }
   },
   watch: {
@@ -296,27 +302,17 @@ export default {
       const vm = this;
       if (vm.openChoice === "編輯" && !vm.tempData.is_enabled) {
         // 若沒有勾選「啓用」則讓優惠卷截止日期過期並且讓使用者無法選取日期
-        const nowDate = new Date(new Date().toLocaleDateString()); //獲取當前時間
-        const preDate = new Date(nowDate.getTime() - 24 * 60 * 60 * 1000 * 2); // 獲取前一天時間戳記
-        vm.due_date = new Date(preDate).toISOString().split("T")[0]; // 這裡也會觸發watch的due_date
+        vm.due_date = this.getMyDate(-2);
       }
+    }
+  },
+  computed: {
+    dateMin() {
+      return this.getMyDate(2);
     }
   },
   created() {
     this.getCoupon();
-
-    /* 測試戳記
-    const cur_timestamp = Math.floor(new Date() / 1000);
-    console.log("當前時間戳記", cur_timestamp);
-    const return_timestamp = new Date(
-      cur_timestamp * 1000
-    ).toLocaleDateString();
-    console.log("將時間戳記返回", return_timestamp);
-
-    var nowDate = new Date(new Date().toLocaleDateString()); //获取当前时间
-    var preDate = new Date(nowDate.getTime() - 24 * 60 * 60 * 1000);
-    console.log("test", nowDate, preDate.toLocaleDateString());
-    */
   }
 };
 </script>
