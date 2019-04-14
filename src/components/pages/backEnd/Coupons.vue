@@ -1,9 +1,8 @@
 <template>
   <div>
+    <!-- v-model會忽略表單元素(form)中的 value, checked, selected。所以直接用v-model="變數名稱爲true"來設定比如checked -->
     <loading :active.sync="isLoading"></loading>
-
-    <button class="btn btn-outline-info mt-3" @click="openModel(true)">建立優惠券</button>
-
+    <button class="btn btn-outline-info mt-3" @click="openModel('建立')">建立優惠券</button>
     <table class="table table-hover mt-4">
       <thead>
         <tr>
@@ -27,19 +26,19 @@
             <b class="text-danger" v-else>未啟用</b>
           </td>
           <td>
-            <button class="btn btn-outline-primary mr-1" @click="openModel(false, item)">編輯</button>
+            <button class="btn btn-outline-primary mr-1" @click="openModel('編輯', item)">編輯</button>
             <!-- id有後端產生 -->
             <button class="btn btn-outline-secondary" @click="deletCoupon(item.id)">刪除</button>
           </td>
         </tr>
       </tbody>
     </table>
-    <!-- 「建立優惠卷」的彈跳視窗模板 -->
+    <!-- 「建立/編輯優惠卷」的彈跳視窗模板 -->
     <div class="modal fade" id="modal-add" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <form class="modal-content" @submit.prevent="updateCoupon()">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">建立優惠券</h5>
+            <h5 class="modal-title" id="exampleModalLongTitle">{{openChoice}}優惠券</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -72,16 +71,29 @@
               </div>
               <div class="col-md-6 mt-2">
                 <div class="form-group">
+                  <input
+                    type="text"
+                    name="tt"
+                    id
+                    v-validate="'required|date_format:YYYY/MM/DD|after:2015/01/01'"
+                  >
+                  <span class="text-danger" v-if="errors.has('tt')">ttt</span>
                   <label>截止日期</label>
+                  <!-- :class會使外框顯示紅色。:disabled當使用者勾選「不啓用」讓期限過期並讓使用者無法選擇日期 -->
                   <input
                     type="date"
                     class="form-control"
                     :class="{'is-invalid': errors.has('end-date')}"
+                    :disabled="!tempData.is_enabled && openChoice==='編輯'"
                     name="end-date"
                     v-model="due_date"
-                    v-validate="'required'"
+                    v-validate="'required|date_format:YYYY/MM/DD|after:2015/01/01'"
                   >
-                  <span class="text-danger" v-if="errors.has('end-date')">請選擇日期</span>
+                  <span
+                    v-if="!tempData.is_enabled && openChoice==='編輯'"
+                    class="text-primary"
+                  >若要設定日期，請勾選啓用</span>
+                  <span class="text-danger" v-if="errors.has('end-date')">請選擇超過二天以上當作截止日期</span>
                 </div>
               </div>
               <div class="col-md-12 mt-2">
@@ -102,7 +114,16 @@
               </div>
               <div class="col-md-12 mt-3">
                 <label>
-                  <input type="checkbox" value="0" v-model="tempData.is_enabled"> 啟用/關閉
+                  <input
+                    v-if="openChoice==='建立'"
+                    :disabled="checked"
+                    v-model="checked"
+                    type="checkbox"
+                    value="建立"
+                  >
+                  <input v-else type="checkbox" value="編輯" v-model="tempData.is_enabled">
+                  <span v-if="openChoice==='建立'">啟用(建立時只能選啓用)</span>
+                  <span v-else>啟用/關閉</span>
                 </label>
               </div>
             </div>
@@ -128,36 +149,31 @@ import $ from "jquery";
 export default {
   data() {
     return {
+      checked: true, // 建立優惠卷預設打勾用
+      due_date: "", // 時間戳記
+      isLoading: false,
+      openChoice: "建立", // 在updateCoupon中判定要上傳的API和method
       coupons: [],
       pagination: {},
       // 會被編輯(put)、刪除(delete)所共同使用並藉由this.tempData = Object.assign({}, item);來將item的值寫到一個{}中,並且避免item & tempData有傳參考的特性。
+      // 上傳到後端優惠卷API的物件
       tempData: {
         title: "",
         percent: 100,
         code: ""
-      },
-      due_date: "",
-      isLoading: false,
-      isNew: false
+      }
     };
   },
-  watch: {
-    // 監聽due_data這個變數,一有變動就執行同名函數
-    due_date() {
-      const vm = this;
-      // 將日期轉成時間戳記(可當成公式來記)
-      const timestamp = Math.floor(new Date(vm.due_date) / 1000);
-      // 在tempData變數下新增一個due_date欄位存放時間戳記
-      vm.tempData.due_date = timestamp;
-    }
-  },
   methods: {
+    onchange() {
+      // 等於js的onchange,用法:在html上綁定@change="onchange",目前沒用到
+    },
     getCoupon(page = 1) {
       // https://github.com/hexschool/vue-course-api-wiki/wiki/%E7%AE%A1%E7%90%86%E6%8E%A7%E5%88%B6%E5%8F%B0-%5B%E9%9C%80%E9%A9%97%E8%AD%89%5D#%E5%8F%96%E5%BE%97%E5%84%AA%E6%83%A0%E5%88%B8%E5%88%97%E8%A1%A8
       // 取得優惠券列表
-      const SERVER_PATH = "https://vue-course-api.hexschool.io";
-      const API_PATH = "caris";
-      const api = `${SERVER_PATH}/api/${API_PATH}/admin/coupons?page=${page}`;
+      const api = `${process.env.SERVER_API_PATH}/api/${
+        process.env.USER_PATH
+      }/admin/coupons?page=${page}`;
       const vm = this;
 
       vm.isLoading = true;
@@ -169,14 +185,17 @@ export default {
         console.log("getCoupon", response);
       });
     },
-    openModel(isNew, item) {
+    openModel(openChoice, item) {
+      // 點擊「建立優惠卷」或「編輯」時執行
       const vm = this;
-      if (isNew) {
-        this.tempData = {}; // 如果是新增功能，清空欄位
-        this.due_date = "";
-        this.isNew = true; // isNew=true (新增功能)
+      if (openChoice === "建立") {
+        vm.tempData = {}; // 如果是新增功能，清空欄位
+        vm.due_date = "";
+        vm.openChoice = "建立"; // 在updateCoupon中判定要上傳的API和method
+        vm.checked = true;
+        vm.tempData.is_enabled = vm.checked;
       } else {
-        // 將時間戳記轉成日期
+        // 編輯
         vm.due_date = new Date(item.due_date * 1000)
           .toISOString()
           .split("T")[0];
@@ -188,28 +207,32 @@ export default {
         // );
         // console.log("after split", vm.due_date);
 
+        // 打開openModel就先將被點擊的物件資料放入vm.tempData中(包含之後更動的以及watch的vm.tempData.due_date),準備當點擊updateCoupon時上傳到後端API。
         // https://jigsawye.com/2015/10/06/javascript-object-assign/
-        this.tempData = Object.assign({}, item); // 如果是編輯功能，將值透過非參考方式傳入欄位
-        // 因爲傳參考的特性,這個tempData會與isNew==true的tempData值相同,所以我們使用ES6的語法解決
-        // 將item的值寫到一個新{}中再放入this.tempData,並且避免item & tempData有傳參考的特性
-        this.isNew = false; // isNew=false (編輯功能)
+        vm.tempData = Object.assign({}, item); // 如果是編輯功能，將值透過非參考方式傳入欄位
+        // 因爲傳參考的特性,這個tempData會與openChoice='建立'的tempData值相同,所以我們使用ES6的語法解決
+        // 將item的值寫到一個新{}中再放入vm.tempData,並且避免item & tempData有傳參考的特性
+
+        vm.openChoice = "編輯"; // openChoice='編輯' (編輯功能),在updateCoupon使用
       }
       $("#modal-add").modal("show");
     },
     updateCoupon() {
       // https://github.com/hexschool/vue-course-api-wiki/wiki/%E7%AE%A1%E7%90%86%E6%8E%A7%E5%88%B6%E5%8F%B0-%5B%E9%9C%80%E9%A9%97%E8%AD%89%5D#%E6%96%B0%E5%A2%9E%E5%84%AA%E6%83%A0%E5%88%B8
       // 新增優惠卷
-      let SERVER_PATH = "https://vue-course-api.hexschool.io";
-      let API_PATH = "caris";
-      let api = `${SERVER_PATH}/api/${API_PATH}/admin/coupon`;
+      let api = `${process.env.SERVER_API_PATH}/api/${
+        process.env.USER_PATH
+      }/admin/coupon`;
       let httpMethods = "post";
       const vm = this;
 
       // 如果不是新增功能，修改api和傳送方式(修改優惠卷)
       // https://github.com/hexschool/vue-course-api-wiki/wiki/%E7%AE%A1%E7%90%86%E6%8E%A7%E5%88%B6%E5%8F%B0-%5B%E9%9C%80%E9%A9%97%E8%AD%89%5D#%E4%BF%AE%E6%94%B9%E5%84%AA%E6%83%A0%E5%88%B8
-      if (!vm.isNew) {
+      if (vm.openChoice === "編輯") {
         //若api使用const宣告這行會error,var or let不會
-        api = `${SERVER_PATH}/api/${API_PATH}/admin/coupon/${vm.tempData.id}`;
+        api = `${process.env.SERVER_API_PATH}/api/${
+          process.env.USER_PATH
+        }/admin/coupon/${vm.tempData.id}`;
         httpMethods = "put";
       }
 
@@ -245,9 +268,9 @@ export default {
     deletCoupon(coupon_id) {
       // https://github.com/hexschool/vue-course-api-wiki/wiki/%E7%AE%A1%E7%90%86%E6%8E%A7%E5%88%B6%E5%8F%B0-%5B%E9%9C%80%E9%A9%97%E8%AD%89%5D#%E5%88%AA%E9%99%A4%E5%84%AA%E6%83%A0%E5%88%B8
       // 刪除優惠卷
-      let SERVER_PATH = "https://vue-course-api.hexschool.io";
-      let API_PATH = "caris";
-      let api = `${SERVER_PATH}/api/${API_PATH}/admin/coupon/${coupon_id}`;
+      let api = `${process.env.SERVER_API_PATH}/api/${
+        process.env.USER_PATH
+      }/admin/coupon/${coupon_id}`;
       const vm = this;
       const d = confirm("確定要刪除?");
 
@@ -259,8 +282,41 @@ export default {
       }
     }
   },
+  watch: {
+    // 監聽due_data這個變數,一有變動就執行同名函數
+    due_date() {
+      const vm = this;
+      // 將使用者選擇的日期即時轉成時間戳記後再透過updateCoupon存入後端(可當成公式來記)
+      const timestamp = Math.floor(new Date(vm.due_date) / 1000);
+      // 在tempData變數下新增一個due_date欄位存放時間戳記
+      vm.tempData.due_date = timestamp; // 在openModel時會放入vm.tempData = Object.assign({}, item),準備當點擊updateCoupon時上傳到後端API。
+    },
+    // 監聽物件的屬性
+    "tempData.is_enabled": function() {
+      const vm = this;
+      if (vm.openChoice === "編輯" && !vm.tempData.is_enabled) {
+        // 若沒有勾選「啓用」則讓優惠卷截止日期過期並且讓使用者無法選取日期
+        const nowDate = new Date(new Date().toLocaleDateString()); //獲取當前時間
+        const preDate = new Date(nowDate.getTime() - 24 * 60 * 60 * 1000 * 2); // 獲取前一天時間戳記
+        vm.due_date = new Date(preDate).toISOString().split("T")[0]; // 這裡也會觸發watch的due_date
+      }
+    }
+  },
   created() {
     this.getCoupon();
+
+    /* 測試戳記
+    const cur_timestamp = Math.floor(new Date() / 1000);
+    console.log("當前時間戳記", cur_timestamp);
+    const return_timestamp = new Date(
+      cur_timestamp * 1000
+    ).toLocaleDateString();
+    console.log("將時間戳記返回", return_timestamp);
+
+    var nowDate = new Date(new Date().toLocaleDateString()); //获取当前时间
+    var preDate = new Date(nowDate.getTime() - 24 * 60 * 60 * 1000);
+    console.log("test", nowDate, preDate.toLocaleDateString());
+    */
   }
 };
 </script>

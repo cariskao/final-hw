@@ -19,7 +19,7 @@ import VueAxios from 'vue-axios' // 將axios的AJAX套件轉爲Vue的套件,就�
 import Loading from 'vue-loading-overlay'; // Loading動畫套件
 import 'vue-loading-overlay/dist/vue-loading.css';
 import 'bootstrap' // 要在這裡引入就必須安裝完整版本含jquery及popper
-import VeeValidate from 'vee-validate' // 驗證套件,若更新後有問題再看六角的說明
+import VeeValidate from 'vee-validate' // 驗證套件,若更新後無法中文化再看六角的說明
 // https://www.udemy.com/vue-hexschool/learn/v4/t/lecture/14052221?start=0
 import zhTWvalidate from 'vee-validate/dist/locale/zh_TW' // 驗證套件中文化
 import Vuex from 'vuex'
